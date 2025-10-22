@@ -1,0 +1,5 @@
+ALTER TABLE public.profiles
+ADD COLUMN is_doctor BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE public.profiles
+ADD COLUMN is_public BOOLEAN DEFAULT FALSE;

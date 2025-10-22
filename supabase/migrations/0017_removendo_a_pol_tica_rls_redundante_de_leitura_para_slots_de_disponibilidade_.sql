@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Enable read access for all authenticated users on availability_" ON public.availability_slots;

@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 210 24% 16%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 12% 45%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 24% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 24% 16%;
+ 
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+ 
+    --primary: 205 85% 50%;
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 210 25% 95%;
+    --secondary-foreground: 205 75% 40%;
+ 
+    --accent: 195 90% 94%;
+    --accent-foreground: 205 75% 40%;
+ 
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --ring: 205 85% 50%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 210 30% 8%;
+    --foreground: 210 20% 98%;
+ 
+    --muted: 210 25% 18%;
+    --muted-foreground: 210 15% 65%;
+ 
+    --popover: 210 30% 10%;
+    --popover-foreground: 210 20% 98%;
+ 
+    --card: 210 30% 10%;
+    --card-foreground: 210 20% 98%;
+ 
+    --border: 210 25% 20%;
+    --input: 210 25% 20%;
+ 
+    --primary: 210 60% 55%;
+    --primary-foreground: 210 30% 8%;
+ 
+    --secondary: 210 25% 18%;
+    --secondary-foreground: 210 20% 98%;
+ 
+    --accent: 210 25% 18%;
+    --accent-foreground: 210 20% 98%;
+ 
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 210 20% 98%;
+ 
+    --ring: 210 60% 55%;
+ 
+    --radius: 0.5rem;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom scrollbar hiding */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+@layer utilities {
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .delay-1000 {
+    animation-delay: 1s;
+  }
+}

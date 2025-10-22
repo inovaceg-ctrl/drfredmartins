@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "Patients can insert their own appointments" ON public.appointments;
+CREATE POLICY "Patients can insert their own appointments" ON public.appointments FOR INSERT TO authenticated WITH CHECK (patient_id = auth.uid());

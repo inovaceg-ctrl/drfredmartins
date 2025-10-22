@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "Doctors can insert their own slots" ON public.availability_slots;
+CREATE POLICY "Doctors can insert their own slots" ON public.availability_slots FOR INSERT TO authenticated WITH CHECK (doctor_id = auth.uid());
