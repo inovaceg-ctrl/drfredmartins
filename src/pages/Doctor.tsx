@@ -21,8 +21,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Database } from "@/integrations/supabase/types";
 import { WhatsappTranscriptionsPage } from "@/pages/WhatsappTranscriptionsPage";
-import { DoctorFormResponsesTab } from "@/components/DoctorFormResponsesTab";
 import { DoctorMedicalRecordsTab } from "@/components/doctor/DoctorMedicalRecordsTab"; // Importar o novo componente
+import { DoctorNewsletterSubscriptionsTab } from "@/components/doctor/DoctorNewsletterSubscriptionsTab"; // Importar o novo componente da newsletter
 import { formatDateToDisplay } from "@/lib/utils"; // Import formatDateToDisplay
 import {
   Drawer,
@@ -494,9 +494,9 @@ const Doctor = () => {
               <MessageSquareText className="h-4 w-4 mr-2" />
               Transcrições WhatsApp
             </TabsTrigger>
-            <TabsTrigger value="form-responses" className="px-3 py-2 text-sm whitespace-nowrap">
+            <TabsTrigger value="newsletter-subscriptions" className="px-3 py-2 text-sm whitespace-nowrap">
               <Mail className="h-4 w-4 mr-2" />
-              Respostas Formulário
+              Newsletter
             </TabsTrigger>
           </TabsList>
 
@@ -514,7 +514,7 @@ const Doctor = () => {
                   {activeTab === "medical-records" && "Prontuários"}
                   {activeTab === "online-consultation" && "Consulta Online"}
                   {activeTab === "whatsapp-transcriptions" && "Transcrições WhatsApp"}
-                  {activeTab === "form-responses" && "Respostas Formulário"}
+                  {activeTab === "newsletter-subscriptions" && "Newsletter"}
                 </Button>
               </DrawerTrigger>
               <DrawerContent className="h-[80vh] rounded-t-[10px] flex flex-col">
@@ -556,9 +556,9 @@ const Doctor = () => {
                       <MessageSquareText className="h-4 w-4 mr-2" />
                       Transcrições WhatsApp
                     </TabsTrigger>
-                    <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("form-responses")}>
+                    <TabsTrigger value="newsletter-subscriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("newsletter-subscriptions")}>
                       <Mail className="h-4 w-4 mr-2" />
-                      Respostas Formulário
+                      Newsletter
                     </TabsTrigger>
                   </TabsList>
                 </div>
@@ -664,16 +664,16 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("form-responses")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("newsletter-subscriptions")}>
                 <CardHeader>
                   <Mail className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Respostas Formulário</CardTitle>
+                  <CardTitle>Newsletter</CardTitle>
                   <CardDescription>
-                    Visualize mensagens enviadas pelo formulário de contato
+                    Visualize as inscrições da newsletter
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" variant="outline">Ver Mensagens</Button>
+                  <Button className="w-full" variant="outline">Ver Inscrições</Button>
                 </CardContent>
               </Card>
             </div>
@@ -983,8 +983,8 @@ const Doctor = () => {
             <WhatsappTranscriptionsPage />
           </TabsContent>
 
-          <TabsContent value="form-responses">
-            {user && <DoctorFormResponsesTab />}
+          <TabsContent value="newsletter-subscriptions">
+            <DoctorNewsletterSubscriptionsTab />
           </TabsContent>
         </Tabs>
       </main>
