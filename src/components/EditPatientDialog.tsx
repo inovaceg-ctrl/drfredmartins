@@ -25,10 +25,17 @@ interface EditPatientDialogProps {
 const formatDateToDisplay = (dateString: string | null): string => {
   if (!dateString) return "";
   try {
-    const date = new Date(dateString);
-    // Check if date is valid and not 'Invalid Date'
-    if (isNaN(date.getTime())) return "";
-    return format(date, "dd/MM/yyyy"); // Changed to /
+    // Assuming dateString is "YYYY-MM-DD" from Supabase
+    const parts = dateString.split('-').map(Number);
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      // Create a Date object in the local timezone to avoid timezone issues
+      const date = new Date(year, month - 1, day); // month is 0-indexed
+      
+      if (isNaN(date.getTime())) return "";
+      return format(date, "dd/MM/yyyy"); // Format for display
+    }
+    return ""; // Invalid dateString format
   } catch {
     return "";
   }
@@ -37,7 +44,7 @@ const formatDateToDisplay = (dateString: string | null): string => {
 const parseDateFromInput = (inputString: string): string | null => {
   if (!inputString) return null;
   // Expecting dd/mm/yyyy
-  const parts = inputString.split('/'); // Changed to /
+  const parts = inputString.split('/');
   if (parts.length === 3) {
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
@@ -48,7 +55,7 @@ const parseDateFromInput = (inputString: string): string | null => {
       return null; // Invalid date components
     }
 
-    const date = new Date(year, month, day);
+    const date = new Date(year, month, day); // This creates a Date object in local timezone
     // Check for valid date and prevent invalid dates like Feb 30th
     if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
       return format(date, "yyyy-MM-dd"); // Return YYYY-MM-DD for internal state and DB

@@ -14,11 +14,72 @@ import { BRAZILIAN_STATES } from "@/lib/brazilian-states";
 import { formatPhone, unformatPhone } from "@/lib/format-phone";
 import { format } from "date-fns";
 
+// Helper functions for date formatting (dd/mm/yyyy)
+const formatDateToDisplay = (dateString: string | null): string => {
+  if (!dateString) return "";
+  try {
+    // Assuming dateString is "YYYY-MM-DD" from Supabase
+    const parts = dateString.split('-').map(Number);
+    if (parts.length === 3) {
+      const [year, month, day] = parts;
+      // Create a Date object in the local timezone to avoid timezone issues
+      const date = new Date(year, month - 1, day); // month is 0-indexed
+      
+      if (isNaN(date.getTime())) return "";
+      return format(date, "dd/MM/yyyy"); // Format for display
+    }
+    return ""; // Invalid dateString format
+  } catch {
+    return "";
+  }
+};
+
+const parseDateFromInput = (inputString: string): string | null => {
+  if (!inputString) return null;
+  // Expecting dd/mm/yyyy
+  const parts = inputString.split('/');
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const year = parseInt(parts[2], 10);
+    
+    // Basic validation for day, month, year ranges
+    if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 0 || month > 11 || year < 1900 || year > 2100) {
+      return null; // Invalid date components
+    }
+
+    const date = new Date(year, month, day); // This creates a Date object in local timezone
+    // Check for valid date and prevent invalid dates like Feb 30th
+    if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
+      return format(date, "yyyy-MM-dd"); // Return YYYY-MM-DD for internal state and DB
+    }
+  }
+  return null; // Invalid format or invalid date
+};
+
+// Input mask handler for date field
+const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>, fieldOnChange: (value: string) => void) => {
+  let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+  let formattedValue = '';
+
+  if (value.length > 0) {
+    formattedValue += value.substring(0, 2);
+    if (value.length > 2) {
+      formattedValue += '/' + value.substring(2, 4);
+    }
+    if (value.length > 4) {
+      formattedValue += '/' + value.substring(4, 8);
+    }
+  }
+  fieldOnChange(formattedValue);
+};
+
+
 const profileSchema = z.object({
   full_name: z.string().min(1, "Nome completo é obrigatório"),
   phone: z.string().optional(),
   whatsapp: z.string().optional(),
-  birth_date: z.string().optional(),
+  birth_date: z.string().optional(), // Will store dd/mm/yyyy string
   street: z.string().optional(),
   street_number: z.string().optional(),
   neighborhood: z.string().optional(),
@@ -77,7 +138,7 @@ export function DoctorProfileForm({ userId, onProfileUpdated }: DoctorProfileFor
           full_name: data.full_name || "",
           phone: data.phone ? formatPhone(data.phone) : "",
           whatsapp: data.whatsapp ? formatPhone(data.whatsapp) : "",
-          birth_date: data.birth_date ? format(new Date(data.birth_date), "yyyy-MM-dd") : "",
+          birth_date: data.birth_date ? formatDateToDisplay(data.birth_date) : "", // Use formatDateToDisplay
           street: data.street || "",
           street_number: data.street_number || "",
           neighborhood: data.neighborhood || "",
@@ -160,13 +221,25 @@ export function DoctorProfileForm({ userId, onProfileUpdated }: DoctorProfileFor
 
   const onSubmit = async (values: ProfileFormValues) => {
     setLoading(true);
+
+    const parsedBirthDate = parseDateFromInput(values.birth_date);
+    if (values.birth_date && !parsedBirthDate) {
+      toast({
+        title: "Erro de Data",
+        description: "O formato da data de nascimento deve ser DD/MM/AAAA e ser uma data válida.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase
       .from('profiles')
       .update({
         full_name: values.full_name,
         phone: values.phone ? unformatPhone(values.phone) : null,
         whatsapp: values.whatsapp ? unformatPhone(values.whatsapp) : null,
-        birth_date: values.birth_date || null,
+        birth_date: parsedBirthDate, // Use parsed date for DB
         street: values.street || null,
         street_number: values.street_number || null,
         neighborhood: values.neighborhood || null,
@@ -267,16 +340,22 @@ export function DoctorProfileForm({ userId, onProfileUpdated }: DoctorProfileFor
             name="birth_date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Data de Nascimento</FormLabel>
+                <FormLabel>Data de Nascimento (DD/MM/AAAA)</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input
+                    type="text"
+                    placeholder="DD/MM/AAAA"
+                    maxLength={10}
+                    {...field}
+                    onChange={(e) => handleDateInputChange(e, field.onChange)} // Use input mask handler
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <h3 className="font-semibold text-lg mt-8 mb-4">Endereço</h3>
+          <h3 className="font-semibold text-lg mt-8">Endereço</h3>
 
           <FormField
             control={form.control}
