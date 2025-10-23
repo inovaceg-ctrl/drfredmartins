@@ -134,18 +134,6 @@ export const DoctorFormResponsesTab: React.FC = () => {
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    {message.email && (
-                      <p className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-primary" />
-                        Email: <a href={`mailto:${message.email}`} className="text-blue-500 hover:underline">{message.email}</a>
-                      </p>
-                    )}
-                    {message.phone && (
-                      <p className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-primary" />
-                        Telefone: <a href={`tel:${message.phone}`} className="text-blue-500 hover:underline">{formatPhone(message.phone)}</a>
-                      </p>
-                    )}
                     {message.whatsapp && (
                       <p className="flex items-center gap-2">
                         <MessageSquare className="h-4 w-4 text-primary" />
@@ -158,10 +146,10 @@ export const DoctorFormResponsesTab: React.FC = () => {
                         Nascimento: {format(new Date(message.date_of_birth), "dd/MM/yyyy", { locale: ptBR })}
                       </p>
                     )}
-                    {(message.street || message.street_number || message.neighborhood) && (
+                    {(message.street || message.neighborhood) && (
                       <p className="flex items-center gap-2 col-span-full">
                         <MapPin className="h-4 w-4 text-primary" />
-                        Endereço: {[message.street, message.street_number, message.neighborhood].filter(Boolean).join(', ') || '-'}
+                        Endereço: {[message.street, message.neighborhood].filter(Boolean).join(', ') || '-'}
                       </p>
                     )}
                     {(message.city || message.state) && (

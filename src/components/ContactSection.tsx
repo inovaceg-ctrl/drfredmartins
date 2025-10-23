@@ -9,34 +9,24 @@ const ContactSection = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    phone: "",
-    whatsapp: "",
+    whatsapp: "", // Apenas WhatsApp
     date_of_birth: "",
     zip_code: "",
     state: "",
     city: "",
     street: "",
-    street_number: "",
     neighborhood: "",
-    receive_email_newsletter: false,
-    receive_whatsapp_newsletter: false,
     message: "",
   });
   const [isSending, setIsSending] = useState(false);
   const [isFetchingCep, setIsFetchingCep] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedValue = formatPhone(e.target.value);
-    setFormData((prev) => ({ ...prev, phone: formattedValue }));
   };
 
   const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,23 +85,17 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSending(true);
 
-    const phoneFormatted = formData.phone.replace(/\D/g, '');
     const whatsappFormatted = formData.whatsapp.replace(/\D/g, '');
 
     const dataToInsert = {
       name: formData.name || 'Não Informado',
-      email: formData.email || null,
-      phone: phoneFormatted || 'Não Informado',
       whatsapp: whatsappFormatted || null,
       date_of_birth: formData.date_of_birth || null,
       zip_code: formData.zip_code || null,
       state: formData.state || 'Não Informado',
       city: formData.city || 'Não Informado',
       street: formData.street || null,
-      street_number: formData.street_number || null,
       neighborhood: formData.neighborhood || null,
-      receive_email_newsletter: formData.receive_email_newsletter,
-      receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
       content: formData.message,
     };
 
@@ -139,18 +123,13 @@ const ContactSection = () => {
       });
       setFormData({
         name: "",
-        email: "",
-        phone: "",
         whatsapp: "",
         date_of_birth: "",
         zip_code: "",
         state: "",
         city: "",
         street: "",
-        street_number: "",
         neighborhood: "",
-        receive_email_newsletter: false,
-        receive_whatsapp_newsletter: false,
         message: "",
       });
     } catch (error: any) {
@@ -256,42 +235,10 @@ const ContactSection = () => {
                 />
               </div>
               
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="seu@email.com"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
-                  Telefone (Fixo/Celular)
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handlePhoneChange}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="99-9-9999-9999"
-                  maxLength={15}
-                />
-              </div>
-
-              {/* Novo campo: WhatsApp */}
+              {/* Campo WhatsApp */}
               <div>
                 <label htmlFor="whatsapp" className="block text-sm font-medium text-foreground mb-2">
-                  WhatsApp
+                  WhatsApp *
                 </label>
                 <input
                   type="tel"
@@ -299,13 +246,14 @@ const ContactSection = () => {
                   name="whatsapp"
                   value={formData.whatsapp}
                   onChange={handleWhatsAppChange}
+                  required
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="99-9-9999-9999"
                   maxLength={15}
                 />
               </div>
 
-              {/* Novo campo: Data de Nascimento */}
+              {/* Campo Data de Nascimento */}
               <div>
                 <label htmlFor="date_of_birth" className="block text-sm font-medium text-foreground mb-2">
                   Data de Nascimento
@@ -320,7 +268,7 @@ const ContactSection = () => {
                 />
               </div>
 
-              {/* Novos campos: CEP, Estado, Cidade */}
+              {/* Campos: CEP, Estado, Cidade */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="zip_code" className="block text-sm font-medium text-foreground mb-2">
@@ -374,7 +322,7 @@ const ContactSection = () => {
                 />
               </div>
 
-              {/* Novos campos: Rua, Número, Bairro */}
+              {/* Campos: Rua, Bairro (sem número da rua) */}
               <div>
                 <label htmlFor="street" className="block text-sm font-medium text-foreground mb-2">
                   Rua/Avenida
@@ -391,73 +339,21 @@ const ContactSection = () => {
                   disabled={isFetchingCep}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="street_number" className="block text-sm font-medium text-foreground mb-2">
-                    Número
-                  </label>
-                  <input
-                    type="text"
-                    id="street_number"
-                    name="street_number"
-                    value={formData.street_number}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="123"
-                    disabled={isFetchingCep}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="neighborhood" className="block text-sm font-medium text-foreground mb-2">
-                    Bairro
-                  </label>
-                  <input
-                    type="text"
-                    id="neighborhood"
-                    name="neighborhood"
-                    value={formData.neighborhood}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Nome do bairro"
-                    readOnly
-                    disabled={isFetchingCep}
-                  />
-                </div>
-              </div>
-
-              {/* Novos campos: Preferências de Newsletter */}
-              <div className="space-y-3">
-                <p className="block text-sm font-medium text-foreground">
-                  Deseja receber informativos sobre saúde mental?
-                </p>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="receive_email_newsletter"
-                    name="receive_email_newsletter"
-                    checked={formData.receive_email_newsletter}
-                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, receive_email_newsletter: checked as boolean }))}
-                  />
-                  <label
-                    htmlFor="receive_email_newsletter"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Via E-mail
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="receive_whatsapp_newsletter"
-                    name="receive_whatsapp_newsletter"
-                    checked={formData.receive_whatsapp_newsletter}
-                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, receive_whatsapp_newsletter: checked as boolean }))}
-                  />
-                  <label
-                    htmlFor="receive_whatsapp_newsletter"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Via WhatsApp
-                  </label>
-                </div>
+              <div>
+                <label htmlFor="neighborhood" className="block text-sm font-medium text-foreground mb-2">
+                  Bairro
+                </label>
+                <input
+                  type="text"
+                  id="neighborhood"
+                  name="neighborhood"
+                  value={formData.neighborhood}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Nome do bairro"
+                  readOnly
+                  disabled={isFetchingCep}
+                />
               </div>
               
               <div>

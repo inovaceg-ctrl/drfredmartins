@@ -139,7 +139,7 @@ export type Database = {
           identification_document?: string | null;
           responsible_parties?: Json | null;
           emergency_contacts?: Json | null;
-        };
+        >;
         Update: {
           id?: string;
           full_name?: string | null;
@@ -163,7 +163,7 @@ export type Database = {
           // Novas colunas adicionadas
           mental_health_history?: string | null;
           main_complaints?: string | null;
-          previous_diagnoses?: string | null;
+          previous_diagnases?: string | null;
           current_medications?: string | null;
           past_sessions_history?: string | null;
           therapist_id?: string | null;
@@ -578,63 +578,48 @@ export type Database = {
           }
         ];
       };
-      messages: { // Adicionada a tabela messages
+      messages: { // Tabela messages atualizada
         Row: {
           id: string;
           name: string;
-          email: string | null;
-          phone: string;
+          whatsapp: string | null;
           content: string;
           is_read: boolean;
           created_at: string;
           date_of_birth: string | null;
-          whatsapp: string | null;
           zip_code: string | null;
           state: string | null;
           city: string | null;
-          street: string | null; // New
-          street_number: string | null; // New
-          neighborhood: string | null; // New
-          receive_email_newsletter: boolean | null;
-          receive_whatsapp_newsletter: boolean | null;
+          street: string | null;
+          neighborhood: string | null;
         };
         Insert: {
           id?: string;
           name?: string;
-          email?: string | null;
-          phone?: string;
+          whatsapp?: string | null;
           content: string;
           is_read?: boolean;
           created_at?: string;
           date_of_birth?: string | null;
-          whatsapp?: string | null;
           zip_code?: string | null;
           state?: string | null;
           city?: string | null;
-          street?: string | null; // New
-          street_number?: string | null; // New
-          neighborhood?: string | null; // New
-          receive_email_newsletter?: boolean | null;
-          receive_whatsapp_newsletter?: boolean | null;
+          street?: string | null;
+          neighborhood?: string | null;
         };
         Update: {
           id?: string;
           name?: string;
-          email?: string | null;
-          phone?: string;
+          whatsapp?: string | null;
           content?: string;
           is_read?: boolean;
           created_at?: string;
           date_of_birth?: string | null;
-          whatsapp?: string | null;
           zip_code?: string | null;
           state?: string | null;
           city?: string | null;
-          street?: string | null; // New
-          street_number?: string | null; // New
-          neighborhood?: string | null; // New
-          receive_email_newsletter?: boolean | null;
-          receive_whatsapp_newsletter?: boolean | null;
+          street?: string | null;
+          neighborhood?: string | null;
         };
         Relationships: [];
       };
