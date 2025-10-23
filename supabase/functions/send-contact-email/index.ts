@@ -18,7 +18,7 @@ serve(async (req) => {
     const SENDER_EMAIL = Deno.env.get('CONTACT_FORM_SENDER_EMAIL');
 
     if (!SENDGRID_API_KEY || !RECIPIENT_EMAIL || !SENDER_EMAIL) {
-      throw new Error('Variáveis de ambiente do SendGrid ou e-mails não configurados.');
+      throw new Error('Variáveis de ambiente do SendGrid ou e-mails não configuradas.');
     }
 
     const { 

@@ -173,7 +173,7 @@ export const DoctorFormResponsesTab: React.FC = () => {
                       disabled={updatingMessageId === message.id}
                     >
                       {updatingMessageId === message.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 mr-2" />
                       ) : message.is_read ? (
                         <>
                           <EyeOff className="h-4 w-4 mr-2" /> Marcar como Não Lida
