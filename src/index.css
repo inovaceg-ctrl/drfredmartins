@@ -71,8 +71,9 @@
 }
  
 @layer base {
-  * {
-    @apply border-border;
+  html, body, #root {
+    height: 100%; /* Garante que ocupem a altura total */
+    overflow-y: auto; /* Permite rolagem vertical */
   }
   body {
     @apply bg-background text-foreground;
