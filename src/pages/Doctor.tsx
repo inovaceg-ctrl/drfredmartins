@@ -922,6 +922,13 @@ const Doctor = () => {
                                 <span className="flex-grow">{patient.created_at ? format(new Date(patient.created_at), "dd/MM/yyyy", { locale: ptBR }) : '-'}</span>
                               </div>
                               
+                              {patient.birth_date && (
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-muted-foreground flex-shrink-0">Data de Nasc.:</span>
+                                  <span className="flex-grow">{format(new Date(patient.birth_date), "dd/MM/yyyy", { locale: ptBR })}</span>
+                                </div>
+                              )}
+
                               <div className="flex items-start gap-2">
                                 <span className="font-medium text-muted-foreground flex-shrink-0">WhatsApp:</span>
                                 <span className="flex-grow">{patient.whatsapp ? formatPhone(patient.whatsapp) : '-'}</span>
