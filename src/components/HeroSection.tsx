@@ -7,13 +7,8 @@ const HeroSection = () => {
   useEffect(() => {
     setIsVisible(true);
   }, []);
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
+  const openWhatsApp = () => {
+    window.open('https://wa.me/553291931779', '_blank');
   };
   return <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
       {/* Animated Background Elements */}
@@ -50,7 +45,7 @@ const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold px-8 py-4 text-lg hover-scale group" onClick={() => scrollToSection('about')}> {/* Changed to 'about' */}
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold px-8 py-4 text-lg hover-scale group" onClick={openWhatsApp}>
                 Agende Sua Consulta
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>

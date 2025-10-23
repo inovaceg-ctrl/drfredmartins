@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import drFrederickStory from "@/assets/dr-frederick-2.png";
 
 const StorySection = () => {
+  const openWhatsApp = () => {
+    window.open('https://wa.me/553291931779', '_blank');
+  };
   return (
     <section id="about" className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
       {/* Background gradient overlay */}
@@ -60,10 +63,7 @@ const StorySection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 className="bg-white text-slate-900 hover:bg-white/90 px-8 py-4 rounded-full text-lg flex items-center gap-3 w-full sm:w-auto"
-                onClick={() => {
-                  const element = document.getElementById('about'); // Changed to 'about'
-                  if (element) element.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={openWhatsApp}
               >
                 Agende Sua Consulta
                 <ArrowRight className="w-5 h-5" />
