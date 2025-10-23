@@ -40,6 +40,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
 
   const fetchActiveSessions = useCallback(async () => {
     setLoadingSessions(true);
+    console.log("DoctorOnlineConsultationTab: Fetching active sessions for doctor:", currentUserId);
     const { data, error } = await supabase
       .from("video_sessions")
       .select(`
@@ -51,13 +52,14 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching active sessions:", error);
+      console.error("DoctorOnlineConsultationTab: Error fetching active sessions:", error);
       toast({
         title: "Erro",
         description: "Não foi possível carregar as sessões ativas.",
         variant: "destructive",
       });
     } else {
+      console.log("DoctorOnlineConsultationTab: Active sessions fetched:", data);
       setActiveSessions(data as ActiveSession[]);
     }
     setLoadingSessions(false);
@@ -66,6 +68,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
   useEffect(() => {
     fetchActiveSessions();
 
+    console.log("DoctorOnlineConsultationTab: Subscribing to real-time changes for doctor_sessions:", currentUserId);
     const channel = supabase
       .channel(`doctor_sessions_${currentUserId}`)
       .on(
@@ -77,9 +80,12 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
           filter: `doctor_id=eq.${currentUserId}`,
         },
         (payload) => {
+          console.log("DoctorOnlineConsultationTab: Real-time event received:", payload);
           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
             const newSession = payload.new as ActiveSession;
+            console.log("DoctorOnlineConsultationTab: New/Updated session:", newSession);
             if (newSession.status === "ringing") {
+              console.log("DoctorOnlineConsultationTab: Incoming call detected, showing notification.");
               // Show notification for incoming call
               IncomingCallNotification({
                 sessionId: newSession.id,
@@ -90,6 +96,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
             }
             fetchActiveSessions(); // Re-fetch to update list
           } else if (payload.eventType === "DELETE") {
+            console.log("DoctorOnlineConsultationTab: Session deleted, re-fetching sessions.");
             fetchActiveSessions();
           }
         }
@@ -97,11 +104,13 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
       .subscribe();
 
     return () => {
+      console.log("DoctorOnlineConsultationTab: Unsubscribing from real-time channel.");
       supabase.removeChannel(channel);
     };
   }, [currentUserId, fetchActiveSessions, toast]);
 
   const handleAcceptCall = useCallback(async (sessionId: string, offer: any) => {
+    console.log("DoctorOnlineConsultationTab: Accepting call for session:", sessionId);
     const sessionToAccept = activeSessions.find(s => s.id === sessionId);
     if (sessionToAccept) {
       setSelectedSession(sessionToAccept);
@@ -111,13 +120,14 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
   }, [activeSessions]);
 
   const handleRejectCall = useCallback(async (sessionId: string) => {
+    console.log("DoctorOnlineConsultationTab: Rejecting call for session:", sessionId);
     const { error } = await supabase
       .from("video_sessions")
       .update({ status: "ended", ended_at: new Date().toISOString() })
       .eq("id", sessionId);
 
     if (error) {
-      console.error("Error rejecting call:", error);
+      console.error("DoctorOnlineConsultationTab: Error rejecting call:", error);
       toast({
         title: "Erro",
         description: "Não foi possível rejeitar a chamada.",
@@ -130,17 +140,20 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
   }, [fetchActiveSessions, toast]);
 
   const handleEndVideoCall = useCallback(() => {
+    console.log("DoctorOnlineConsultationTab: Video call ended.");
     setMode("idle");
     setSelectedSession(null);
     fetchActiveSessions(); // Refresh sessions after call ends
   }, [fetchActiveSessions]);
 
   const handleOpenChat = (session: ActiveSession) => {
+    console.log("DoctorOnlineConsultationTab: Opening chat for session:", session.id);
     setSelectedSession(session);
     setMode("chat");
   };
 
   const handleOpenVideo = (session: ActiveSession) => {
+    console.log("DoctorOnlineConsultationTab: Opening video for session:", session.id);
     setSelectedSession(session);
     setMode("video");
   };
