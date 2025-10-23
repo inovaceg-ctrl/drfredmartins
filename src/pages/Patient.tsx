@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Clock, FileText, LogOut, Video, LayoutGrid, MessageSquare, Menu } from "lucide-react"; // Adicionado Menu
+import { Calendar, Clock, FileText, LogOut, Video, LayoutGrid, MessageSquare } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
@@ -15,16 +15,6 @@ import PatientDocumentsPage from "@/pages/PatientDocumentsPage";
 import { PatientOverviewTab } from "@/components/patient/PatientOverviewTab";
 import { PatientScheduleTab } from "@/components/patient/PatientScheduleTab";
 import { PatientAppointmentsTab } from "@/components/patient/PatientAppointmentsTab";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 
 const Patient = () => {
   const navigate = useNavigate();
@@ -32,7 +22,6 @@ const Patient = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [patientProfile, setPatientProfile] = useState<any>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Estado para controlar o Drawer
   const { toast } = useToast();
 
   const fetchPatientProfile = useCallback(async (userId: string) => {
@@ -106,7 +95,6 @@ const Patient = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    setIsDrawerOpen(false); // Fecha o drawer ao selecionar uma aba
   };
 
   if (loading) {
@@ -140,80 +128,28 @@ const Patient = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-          {/* Desktop TabsList */}
-          <TabsList className="hidden md:flex w-full bg-muted p-1 rounded-lg border space-x-1">
-            <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap">
+          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1 md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
+            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <LayoutGrid className="h-4 w-4 mr-2" />
               Início
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="px-3 py-2 text-sm whitespace-nowrap">
+            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Calendar className="h-4 w-4 mr-2" />
               Agendar
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="px-3 py-2 text-sm whitespace-nowrap">
+            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Clock className="h-4 w-4 mr-2" />
               Consultas
             </TabsTrigger>
-            <TabsTrigger value="online-consultation" className="px-3 py-2 text-sm whitespace-nowrap">
+            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <MessageSquare className="h-4 w-4 mr-2" />
               Consulta Online
             </TabsTrigger>
-            <TabsTrigger value="documents" className="px-3 py-2 text-sm whitespace-nowrap">
+            <TabsTrigger value="documents" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <FileText className="h-4 w-4 mr-2" />
               Documentos
             </TabsTrigger>
           </TabsList>
-
-          {/* Mobile Drawer Menu */}
-          <div className="md:hidden mb-4">
-            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-              <DrawerTrigger asChild>
-                <Button variant="outline" className="w-full justify-start">
-                  <Menu className="h-4 w-4 mr-2" />
-                  {activeTab === "overview" && "Início"}
-                  {activeTab === "schedule" && "Agendar"}
-                  {activeTab === "appointments" && "Consultas"}
-                  {activeTab === "online-consultation" && "Consulta Online"}
-                  {activeTab === "documents" && "Documentos"}
-                </Button>
-              </DrawerTrigger>
-              <DrawerContent className="h-[80vh] rounded-t-[10px] flex flex-col">
-                <DrawerHeader className="text-left">
-                  <DrawerTitle>Navegação do Portal</DrawerTitle>
-                  <DrawerDescription>Selecione uma opção abaixo</DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 flex-1 overflow-y-auto">
-                  <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1">
-                    <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("overview")}>
-                      <LayoutGrid className="h-4 w-4 mr-2" />
-                      Início
-                    </TabsTrigger>
-                    <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("schedule")}>
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Agendar
-                    </TabsTrigger>
-                    <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("appointments")}>
-                      <Clock className="h-4 w-4 mr-2" />
-                      Consultas
-                    </TabsTrigger>
-                    <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("online-consultation")}>
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Consulta Online
-                    </TabsTrigger>
-                    <TabsTrigger value="documents" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("documents")}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Documentos
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-                <DrawerFooter>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Fechar</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
-          </div>
 
           <TabsContent value="overview" className="space-y-4">
             <PatientOverviewTab setActiveTab={handleTabChange} />

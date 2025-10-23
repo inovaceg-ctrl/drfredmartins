@@ -7,11 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, User, CalendarDays, BookOpen, MessageSquareText, ClipboardList, CheckCircle, XCircle, Stethoscope, FileText } from "lucide-react";
+import { Loader2, User, CalendarDays, BookOpen, MessageSquareText, ClipboardList, CheckCircle, XCircle, Stethoscope, FileText, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EditMedicalRecordDialog } from "./EditMedicalRecordDialog"; // Importar o novo componente de diálogo
 
 type PatientProfile = Database['public']['Tables']['profiles']['Row'];
 type Session = Database['public']['Tables']['sessions']['Row'];
@@ -40,6 +41,9 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
     notes: "",
   });
   const [addingMedicalRecord, setAddingMedicalRecord] = useState(false);
+
+  const [editingMedicalRecord, setEditingMedicalRecord] = useState<MedicalRecord | null>(null);
+  const [editMedicalRecordDialogOpen, setEditMedicalRecordDialogOpen] = useState(false);
 
   // Fetch all patients for the doctor
   const { data: patients, isLoading: isLoadingPatients } = useQuery({
@@ -211,6 +215,16 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
     } finally {
       setAddingMedicalRecord(false);
     }
+  };
+
+  const handleEditMedicalRecord = (record: MedicalRecord) => {
+    setEditingMedicalRecord(record);
+    setEditMedicalRecordDialogOpen(true);
+  };
+
+  const handleMedicalRecordUpdated = () => {
+    queryClient.invalidateQueries({ queryKey: ["patientMedicalRecords", selectedPatientId] }); // Refetch medical records
+    setEditingMedicalRecord(null);
   };
 
   if (isLoadingPatients || isLoadingDoctors) {
@@ -448,10 +462,20 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
               ) : patientMedicalRecords && patientMedicalRecords.length > 0 ? (
                 patientMedicalRecords.map((record) => (
                   <div key={record.id} className="border rounded-lg p-4 space-y-2">
-                    <p className="font-semibold text-lg flex items-center gap-2">
-                      <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                      {format(new Date(record.created_at!), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="font-semibold text-lg flex items-center gap-2">
+                        <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                        {record.created_at ? format(new Date(record.created_at), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR }) : 'Data desconhecida'}
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditMedicalRecord(record)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Editar
+                      </Button>
+                    </div>
                     {record.diagnosis && <p><span className="font-medium">Diagnóstico:</span> {record.diagnosis}</p>}
                     {record.prescription && <p><span className="font-medium">Prescrição:</span> {record.prescription}</p>}
                     {record.notes && <p><span className="font-medium">Notas:</span> {record.notes}</p>}
@@ -463,6 +487,15 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {editingMedicalRecord && (
+        <EditMedicalRecordDialog
+          medicalRecord={editingMedicalRecord}
+          open={editMedicalRecordDialogOpen}
+          onOpenChange={setEditMedicalRecordDialogOpen}
+          onRecordUpdated={handleMedicalRecordUpdated}
+        />
       )}
     </div>
   );
