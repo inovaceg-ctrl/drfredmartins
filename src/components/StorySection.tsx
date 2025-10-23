@@ -89,11 +89,7 @@ const StorySection = () => {
 };
 
 const stats = [
-  {
-    icon: GraduationCap,
-    number: "PhD",
-    label: "Psicanálise"
-  },
+  // Removido o item "PhD Psicanálise"
   {
     icon: Users,
     number: "1.1M+",
