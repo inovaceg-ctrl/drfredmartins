@@ -1,8 +1,61 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Instagram, Phone, Mail } from "lucide-react";
+import { Instagram, Phone, Mail, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast({
+        title: "Erro",
+        description: "Por favor, insira um e-mail válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscriptions')
+        .insert({ email: email.trim() });
+
+      if (error) {
+        if (error.code === '23505') { // Unique violation code
+          toast({
+            title: "Erro",
+            description: "Este e-mail já está inscrito na newsletter.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Sucesso!",
+          description: "Obrigado por se inscrever na nossa newsletter!",
+        });
+        setEmail(""); // Limpa o campo de e-mail
+      }
+    } catch (error: any) {
+      console.error("Erro ao inscrever na newsletter:", error);
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível inscrever-se na newsletter. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-gradient-to-b from-slate-900 to-black border-t border-white/10">
       <div className="container mx-auto px-4 py-16">
@@ -92,14 +145,21 @@ const Footer = () => {
             <p className="text-white/70 mb-4">
               Receba conteúdos exclusivos sobre saúde mental e desenvolvimento pessoal.
             </p>
-            <form className="flex flex-col space-y-4">
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col space-y-4">
               <Input
                 type="email"
                 placeholder="Seu e-mail"
                 className="bg-white/5 border-white/10 placeholder:text-white/50 text-white"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
-              <Button variant="secondary" className="bg-white text-slate-900 hover:bg-white/90 rounded-full">
-                Inscrever-se
+              <Button type="submit" variant="secondary" className="bg-white text-slate-900 hover:bg-white/90 rounded-full" disabled={loading}>
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Inscrever-se"
+                )}
               </Button>
             </form>
           </div>
