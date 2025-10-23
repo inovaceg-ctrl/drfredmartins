@@ -85,7 +85,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
             const newSession = payload.new as ActiveSession;
             console.log("DoctorOnlineConsultationTab: New/Updated session:", newSession);
             if (newSession.status === "ringing") {
-              console.log("DoctorOnlineConsultationTab: Incoming call detected, showing notification.");
+              console.log("DoctorOnlineConsultationTab: Incoming call detected, showing notification. Offer:", newSession.offer);
               // Show notification for incoming call
               IncomingCallNotification({
                 sessionId: newSession.id,
@@ -110,7 +110,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
   }, [currentUserId, fetchActiveSessions, toast]);
 
   const handleAcceptCall = useCallback(async (sessionId: string, offer: any) => { // Added 'offer' parameter
-    console.log("DoctorOnlineConsultationTab: Accepting call for session:", sessionId, "with offer:", offer);
+    console.log("DoctorOnlineConsultationTab: handleAcceptCall triggered for session:", sessionId, "with offer:", offer);
     const sessionToAccept = activeSessions.find(s => s.id === sessionId);
     if (sessionToAccept) {
       setSelectedSession({ ...sessionToAccept, offer: offer }); // Ensure offer is part of selectedSession

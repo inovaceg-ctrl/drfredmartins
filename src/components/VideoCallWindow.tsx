@@ -42,22 +42,32 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
   };
 
   const setupPeerConnection = useCallback(async () => {
+    console.log("VideoCallWindow: Setting up PeerConnection.");
     peerConnection.current = new RTCPeerConnection(servers);
 
-    localStream.current = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = localStream.current;
+    try {
+      localStream.current = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = localStream.current;
+      }
+      localStream.current.getTracks().forEach((track) => {
+        peerConnection.current?.addTrack(track, localStream.current!);
+      });
+    } catch (err) {
+      console.error("Error accessing media devices:", err);
+      toast({
+        title: "Erro de Mídia",
+        description: "Não foi possível acessar câmera ou microfone. Verifique as permissões.",
+        variant: "destructive",
+      });
+      throw err; // Propagate error to prevent further connection issues
     }
 
-    localStream.current.getTracks().forEach((track) => {
-      peerConnection.current?.addTrack(track, localStream.current!);
-    });
-
     peerConnection.current.ontrack = (event) => {
+      console.log("VideoCallWindow: Remote track received.");
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = event.streams[0];
       }
@@ -65,6 +75,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
 
     peerConnection.current.onicecandidate = async (event) => {
       if (event.candidate && sessionId) {
+        console.log("VideoCallWindow: ICE candidate generated:", event.candidate);
         // Fetch current ice_candidates to append, not overwrite
         const { data: currentSession, error: fetchError } = await supabase
           .from("video_sessions")
@@ -88,11 +99,12 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
           .eq("id", sessionId);
       }
     };
-  }, [sessionId]);
+  }, [sessionId, toast]);
 
   const createOffer = useCallback(async () => {
     if (!peerConnection.current || !sessionId) return;
 
+    console.log("VideoCallWindow: Creating offer.");
     const offer = await peerConnection.current.createOffer();
     await peerConnection.current.setLocalDescription(offer);
 
@@ -100,59 +112,87 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
       .from("video_sessions")
       .update({ offer: peerConnection.current.localDescription })
       .eq("id", sessionId);
+    console.log("VideoCallWindow: Offer created and saved to Supabase.");
   }, [sessionId]);
 
   const handleAcceptCall = useCallback(async (incomingSessionId: string, offer: RTCSessionDescriptionInit) => {
+    console.log("VideoCallWindow: handleAcceptCall triggered. Session ID:", incomingSessionId, "Offer:", offer);
     setCallStatus("active");
     setSessionId(incomingSessionId);
-    await setupPeerConnection();
-    await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await peerConnection.current?.createAnswer();
-    await peerConnection.current?.setLocalDescription(answer);
+    
+    try {
+      await setupPeerConnection();
+      
+      // Add a small delay to ensure remote description is ready
+      await new Promise(resolve => setTimeout(resolve, 500)); 
 
-    await supabase
-      .from("video_sessions")
-      .update({ answer: peerConnection.current?.localDescription, status: "active", started_at: new Date().toISOString() })
-      .eq("id", incomingSessionId);
+      await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(offer));
+      console.log("VideoCallWindow: Remote description set from incoming offer.");
 
-    toast({ title: "Chamada aceita", description: "Conectando..." });
-  }, [setupPeerConnection, toast]);
+      const answer = await peerConnection.current?.createAnswer();
+      await peerConnection.current?.setLocalDescription(answer);
+      console.log("VideoCallWindow: Local answer created and set.");
+
+      await supabase
+        .from("video_sessions")
+        .update({ answer: peerConnection.current?.localDescription, status: "active", started_at: new Date().toISOString() })
+        .eq("id", incomingSessionId);
+      console.log("VideoCallWindow: Answer saved to Supabase, session status updated to active.");
+
+      toast({ title: "Chamada aceita", description: "Conectando..." });
+    } catch (err: any) {
+      console.error("VideoCallWindow: Error accepting call:", err);
+      toast({
+        title: "Erro ao aceitar chamada",
+        description: err.message || "Não foi possível aceitar a chamada. Verifique o console.",
+        variant: "destructive",
+      });
+      handleEndCall(); // End call on error
+    }
+  }, [setupPeerConnection, toast, handleEndCall]);
 
   const handleCall = useCallback(async () => {
     setCallStatus("connecting");
     const newSessionId = uuidv4();
     setSessionId(newSessionId);
+    console.log("VideoCallWindow: Initiating new call with session ID:", newSessionId);
 
-    const { error } = await supabase.from("video_sessions").insert({
-      id: newSessionId,
-      user_id: currentUserId, // Initiator
-      patient_id: isInitiator ? currentUserId : otherUserId,
-      doctor_id: isInitiator ? otherUserId : currentUserId,
-      room_id: newSessionId,
-      status: "ringing",
-      appointment_id: appointmentId,
-      ice_candidates: [], // Initialize with empty array
-    });
+    try {
+      const { error } = await supabase.from("video_sessions").insert({
+        id: newSessionId,
+        user_id: currentUserId, // Initiator
+        patient_id: isInitiator ? currentUserId : otherUserId,
+        doctor_id: isInitiator ? otherUserId : currentUserId,
+        room_id: newSessionId,
+        status: "ringing",
+        appointment_id: appointmentId,
+        ice_candidates: [], // Initialize with empty array
+      });
 
-    if (error) {
-      console.error("Error creating video session:", error);
-      console.error("Supabase insert error details:", error.message, error.details, error.hint, error.code);
+      if (error) {
+        console.error("Error creating video session:", error);
+        console.error("Supabase insert error details:", error.message, error.details, error.hint, error.code);
+        throw new Error(`Não foi possível iniciar a chamada. Detalhes: ${error.message || "Verifique o console para mais informações."}`);
+      }
+      console.log("VideoCallWindow: Video session entry created in Supabase.");
+
+      await setupPeerConnection();
+      await createOffer();
+      toast({ title: "Chamada iniciada", description: "Aguardando o médico aceitar..." });
+    } catch (error: any) {
+      console.error("VideoCallWindow: Error in handleCall:", error);
       toast({
         title: "Erro",
-        description: `Não foi possível iniciar a chamada. Detalhes: ${error.message || "Verifique o console para mais informações."}`,
+        description: error.message,
         variant: "destructive",
       });
       setCallStatus("idle");
       setSessionId(null);
-      return;
     }
-
-    await setupPeerConnection();
-    await createOffer();
-    toast({ title: "Chamada iniciada", description: "Aguardando o médico aceitar..." });
   }, [currentUserId, otherUserId, appointmentId, isInitiator, setupPeerConnection, createOffer, toast]);
 
   const handleEndCall = useCallback(async () => {
+    console.log("VideoCallWindow: Ending call for session:", sessionId);
     if (peerConnection.current) {
       peerConnection.current.close();
       peerConnection.current = null;
@@ -167,6 +207,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
         .from("video_sessions")
         .update({ status: "ended", ended_at: new Date().toISOString() })
         .eq("id", sessionId);
+      console.log("VideoCallWindow: Session status updated to ended in Supabase.");
     }
     setCallStatus("ended");
     setSessionId(null);
@@ -178,6 +219,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
     if (localStream.current) {
       localStream.current.getAudioTracks().forEach(track => (track.enabled = !track.enabled));
       setIsMuted(!isMuted);
+      console.log("VideoCallWindow: Audio toggled. Muted:", !isMuted);
     }
   };
 
@@ -185,18 +227,17 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
     if (localStream.current) {
       localStream.current.getVideoTracks().forEach(track => (track.enabled = !track.enabled));
       setIsVideoOff(!isVideoOff);
+      console.log("VideoCallWindow: Video toggled. Video Off:", !isVideoOff);
     }
   };
 
   useEffect(() => {
-    if (initialSessionId && !isInitiator && incomingOffer) { // Check for incomingOffer
-      // Doctor joining an existing call
-      console.log("VideoCallWindow: Doctor joining with initialSessionId and incomingOffer.");
-      handleAcceptCall(initialSessionId, incomingOffer); // Pass the incomingOffer directly
+    console.log("VideoCallWindow useEffect: initialSessionId:", initialSessionId, "isInitiator:", isInitiator, "incomingOffer:", incomingOffer);
+    if (initialSessionId && !isInitiator && incomingOffer) {
+      console.log("VideoCallWindow useEffect: Doctor joining with initialSessionId and incomingOffer. Calling handleAcceptCall.");
+      handleAcceptCall(initialSessionId, incomingOffer);
     } else if (initialSessionId && !isInitiator && !incomingOffer) {
-      // Fallback: if for some reason incomingOffer is not provided, fetch it.
-      // This should ideally not happen if the notification always passes the offer.
-      console.warn("VideoCallWindow: Doctor joining without incomingOffer. Fetching session data as fallback.");
+      console.warn("VideoCallWindow useEffect: Doctor joining without incomingOffer. Fetching session data as fallback.");
       const fetchSession = async () => {
         const { data, error } = await supabase
           .from("video_sessions")
@@ -204,24 +245,38 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
           .eq("id", initialSessionId)
           .single();
 
-        if (error || !data || !data.offer) {
-          console.error("VideoCallWindow: Fallback fetch failed. Error:", error, "Data:", data);
-          toast({ title: "Erro", description: "Sessão de chamada inválida ou expirada (fallback).", variant: "destructive" });
+        if (error) {
+          console.error("VideoCallWindow useEffect: Fallback fetch failed with Supabase error:", error);
+          toast({ title: "Erro", description: `Sessão de chamada inválida ou expirada (fallback): ${error.message}`, variant: "destructive" });
           onEndCall();
           return;
         }
+        if (!data) {
+          console.error("VideoCallWindow useEffect: Fallback fetch failed: No session data found for ID:", initialSessionId);
+          toast({ title: "Erro", description: "Sessão de chamada inválida ou expirada (fallback): Nenhuma sessão encontrada.", variant: "destructive" });
+          onEndCall();
+          return;
+        }
+        if (!data.offer) {
+          console.error("VideoCallWindow useEffect: Fallback fetch failed: Session data found, but no offer present for ID:", initialSessionId, "Data:", data);
+          toast({ title: "Erro", description: "Sessão de chamada inválida ou expirada (fallback): Oferta não encontrada na sessão.", variant: "destructive" });
+          onEndCall();
+          return;
+        }
+        console.log("VideoCallWindow useEffect: Fallback fetch successful, data.offer:", data.offer);
         handleAcceptCall(initialSessionId, data.offer as RTCSessionDescriptionInit);
       };
       fetchSession();
     } else if (isInitiator && !initialSessionId) {
-      // Initiator starts the call
+      console.log("VideoCallWindow useEffect: Initiator mode, waiting for handleCall button click.");
       // Call is initiated via button click, not on mount
     }
-  }, [initialSessionId, isInitiator, incomingOffer, handleAcceptCall, onEndCall, toast]); // Added incomingOffer to deps
+  }, [initialSessionId, isInitiator, incomingOffer, handleAcceptCall, onEndCall, toast]);
 
   useEffect(() => {
     if (!sessionId) return;
 
+    console.log("VideoCallWindow: Subscribing to real-time changes for video_session:", sessionId);
     const channel = supabase
       .channel(`video_session_${sessionId}`)
       .on(
@@ -234,6 +289,8 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
         },
         async (payload) => {
           const updatedSession = payload.new as any;
+          console.log("VideoCallWindow: Real-time update received for session:", updatedSession);
+
           if (updatedSession.status === "active" && callStatus === "connecting") {
             setCallStatus("active");
             toast({ title: "Chamada conectada!" });
@@ -242,11 +299,15 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
           }
 
           if (peerConnection.current && updatedSession.answer && !peerConnection.current.currentRemoteDescription) {
+            console.log("VideoCallWindow: Received answer via real-time, setting remote description.");
             await peerConnection.current.setRemoteDescription(new RTCSessionDescription(updatedSession.answer));
           }
 
           if (peerConnection.current && updatedSession.ice_candidates && updatedSession.ice_candidates.length > 0) {
+            console.log("VideoCallWindow: Received ICE candidates via real-time.");
             for (const candidate of updatedSession.ice_candidates) {
+              // Check if candidate is already added to avoid duplicates
+              // This check is simplified, a more robust solution might involve tracking added candidates
               if (candidate && !peerConnection.current.remoteDescription?.sdp.includes(candidate.candidate)) {
                 await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
               }
@@ -257,6 +318,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
       .subscribe();
 
     return () => {
+      console.log("VideoCallWindow: Unsubscribing from real-time channel for session:", sessionId);
       supabase.removeChannel(channel);
     };
   }, [sessionId, callStatus, handleEndCall, toast]);
