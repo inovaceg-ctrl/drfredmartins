@@ -70,10 +70,7 @@ const HeroSection = () => {
                 <div className="text-3xl font-bold text-blue-400">10+</div>
                 <div className="text-sm text-white/70">Anos Clínica</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400">PhD</div>
-                <div className="text-sm text-white/70">Psicanálise</div>
-              </div>
+              {/* Removido o item "PhD Psicanálise" */}
             </div>
           </div>
 
