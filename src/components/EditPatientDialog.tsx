@@ -21,6 +21,43 @@ interface EditPatientDialogProps {
   onPatientUpdated: () => void;
 }
 
+// Helper functions for date formatting (dd/mm/yyyy)
+const formatDateToDisplay = (dateString: string | null): string => {
+  if (!dateString) return "";
+  try {
+    const date = new Date(dateString);
+    // Check if date is valid and not 'Invalid Date'
+    if (isNaN(date.getTime())) return "";
+    return format(date, "dd/MM/yyyy"); // Changed to /
+  } catch {
+    return "";
+  }
+};
+
+const parseDateFromInput = (inputString: string): string | null => {
+  if (!inputString) return null;
+  // Expecting dd/mm/yyyy
+  const parts = inputString.split('/'); // Changed to /
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const year = parseInt(parts[2], 10);
+    
+    // Basic validation for day, month, year ranges
+    if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 0 || month > 11 || year < 1900 || year > 2100) {
+      return null; // Invalid date components
+    }
+
+    const date = new Date(year, month, day);
+    // Check for valid date and prevent invalid dates like Feb 30th
+    if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
+      return format(date, "yyyy-MM-dd"); // Return YYYY-MM-DD for internal state and DB
+    }
+  }
+  return null; // Invalid format or invalid date
+};
+
+
 export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdated }: EditPatientDialogProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -34,7 +71,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
     city: "",
     state: "",
     zip_code: "",
-    birth_date: "", // Will store yyyy-MM-dd string for type="date" input
+    birth_date: "", // Will store dd/mm/yyyy string
     mental_health_history: "",
     main_complaints: "",
     previous_diagnoses: "",
@@ -71,8 +108,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
         city: patient.city || "",
         state: patient.state || "",
         zip_code: patient.zip_code || "",
-        // Format birth_date to YYYY-MM-DD for the native date input
-        birth_date: patient.birth_date ? format(new Date(patient.birth_date), "yyyy-MM-dd") : "",
+        birth_date: patient.birth_date ? formatDateToDisplay(patient.birth_date) : "", // Format for display
         mental_health_history: patient.mental_health_history || "",
         main_complaints: patient.main_complaints || "",
         previous_diagnoses: patient.previous_diagnoses || "",
@@ -142,14 +178,41 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
     setLoadingNotes(false);
   };
 
+  // New: Input mask for date field
+  const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    let formattedValue = '';
+
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 2);
+      if (value.length > 2) {
+        formattedValue += '/' + value.substring(2, 4);
+      }
+      if (value.length > 4) {
+        formattedValue += '/' + value.substring(4, 8);
+      }
+    }
+    setFormData((prev) => ({ ...prev, birth_date: formattedValue }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // The birth_date from the input (type="date") will already be in YYYY-MM-DD format or empty.
-      // No manual parsing from DD-MM-YYYY is needed here.
-      const birthDateForDb = formData.birth_date || null;
+      // Parse birth_date from dd/mm/yyyy to yyyy-MM-dd for Supabase
+      const parsedBirthDate = parseDateFromInput(formData.birth_date);
+
+      // Add validation feedback for birth_date
+      if (formData.birth_date && !parsedBirthDate) {
+        toast({
+          title: "Erro de Data",
+          description: "O formato da data de nascimento deve ser DD/MM/AAAA e ser uma data válida.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return; // Stop submission if date is invalid
+      }
 
       // Update profile
       const { error: profileError } = await (supabase as any)
@@ -164,7 +227,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
           city: formData.city,
           state: formData.state,
           zip_code: formData.zip_code,
-          birth_date: birthDateForDb, // Use directly from formData
+          birth_date: parsedBirthDate, // Use parsed date for DB
           mental_health_history: formData.mental_health_history || null,
           main_complaints: formData.main_complaints || null,
           previous_diagnoses: formData.previous_diagnoses || null,
@@ -269,12 +332,14 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="birth_date">Data de Nascimento</Label>
+            <Label htmlFor="birth_date">Data de Nascimento (DD/MM/AAAA)</Label>
             <Input
               id="birth_date"
-              type="date" // Changed to type="date"
+              type="text"
               value={formData.birth_date}
-              onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+              onChange={handleDateInputChange} // Using the new input mask handler
+              placeholder="DD/MM/AAAA"
+              maxLength={10} // Max length for dd/mm/yyyy
             />
           </div>
 
