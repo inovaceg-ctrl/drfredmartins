@@ -442,455 +442,459 @@ const Doctor = () => {
           </Button>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1">
-            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Visão Geral
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <UserIcon className="h-4 w-4 mr-2" />
-              Perfil
-            </TabsTrigger>
-            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              Agenda
-            </TabsTrigger>
-            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <Clock className="h-4 w-4 mr-2" />
-              Consultas
-            </TabsTrigger>
-            <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <Users className="h-4 w-4 mr-2" />
-              Pacientes
-            </TabsTrigger>
-            <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <BookOpen className="h-4 w-4 mr-2" /> {/* Novo ícone */}
-              Prontuários
-            </TabsTrigger>
-            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Consulta Online
-            </TabsTrigger>
-            <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <MessageSquareText className="h-4 w-4 mr-2" />
-              Transcrições WhatsApp
-            </TabsTrigger>
-            <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left">
-              <Mail className="h-4 w-4 mr-2" />
-              Respostas Formulário
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col md:flex-row gap-4"> {/* Adicionado flex-col e md:flex-row para layout */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-64"> {/* Definindo largura para o menu */}
+            <TabsList className="flex flex-col w-full bg-menu-bg p-2 rounded-lg border border-border space-y-1">
+              <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Visão Geral
+              </TabsTrigger>
+              <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <UserIcon className="h-4 w-4 mr-2" />
+                Perfil
+              </TabsTrigger>
+              <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <CalendarIcon className="h-4 w-4 mr-2" />
+                Agenda
+              </TabsTrigger>
+              <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <Clock className="h-4 w-4 mr-2" />
+                Consultas
+              </TabsTrigger>
+              <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <Users className="h-4 w-4 mr-2" />
+                Pacientes
+              </TabsTrigger>
+              <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <BookOpen className="h-4 w-4 mr-2" /> {/* Novo ícone */}
+                Prontuários
+              </TabsTrigger>
+              <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Consulta Online
+              </TabsTrigger>
+              <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <MessageSquareText className="h-4 w-4 mr-2" />
+                Transcrições WhatsApp
+              </TabsTrigger>
+              <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
+                <Mail className="h-4 w-4 mr-2" />
+                Respostas Formulário
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("profile")}>
-                <CardHeader>
-                  <UserIcon className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Meu Perfil</CardTitle>
-                  <CardDescription>
-                    Atualize seus dados pessoais e especialidade
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full">Editar Perfil</Button>
-                </CardContent>
-              </Card>
+          <div className="flex-1"> {/* Conteúdo das abas */}
+            <TabsContent value="overview" className="space-y-4">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("profile")}>
+                  <CardHeader>
+                    <UserIcon className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Meu Perfil</CardTitle>
+                    <CardDescription>
+                      Atualize seus dados pessoais e especialidade
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full">Editar Perfil</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("schedule")}>
-                <CardHeader>
-                  <CalendarIcon className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Gerenciar Agenda</CardTitle>
-                  <CardDescription>
-                    Configure seus horários disponíveis para consultas
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full">Configurar Horários</Button>
-                </CardContent>
-              </Card>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("schedule")}>
+                  <CardHeader>
+                    <CalendarIcon className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Gerenciar Agenda</CardTitle>
+                    <CardDescription>
+                      Configure seus horários disponíveis para consultas
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full">Configurar Horários</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("appointments")}>
-                <CardHeader>
-                  <Clock className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Consultas Agendadas</CardTitle>
-                  <CardDescription>
-                    Veja e gerencie suas consultas
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant="outline">Ver Agenda</Button>
-                </CardContent>
-              </Card>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("appointments")}>
+                  <CardHeader>
+                    <Clock className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Consultas Agendadas</CardTitle>
+                    <CardDescription>
+                      Veja e gerencie suas consultas
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" variant="outline">Ver Agenda</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("patients")}>
-                <CardHeader>
-                  <Users className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Meus Pacientes</CardTitle>
-                  <CardDescription>
-                    Acesse a lista e histórico de seus pacientes
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant="outline">Ver Pacientes</Button>
-                </CardContent>
-              </Card>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("patients")}>
+                  <CardHeader>
+                    <Users className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Meus Pacientes</CardTitle>
+                    <CardDescription>
+                      Acesse a lista e histórico de seus pacientes
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" variant="outline">Ver Pacientes</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("medical-records")}> {/* Novo Card */}
-                <CardHeader>
-                  <BookOpen className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Prontuários</CardTitle>
-                  <CardDescription>
-                    Acesse e edite prontuários e sessões dos pacientes
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant="outline">Ver Prontuários</Button>
-                </CardContent>
-              </Card>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("medical-records")}> {/* Novo Card */}
+                  <CardHeader>
+                    <BookOpen className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Prontuários</CardTitle>
+                    <CardDescription>
+                      Acesse e edite prontuários e sessões dos pacientes
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" variant="outline">Ver Prontuários</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("online-consultation")}>
-                <CardHeader>
-                  <Video className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Consulta Online</CardTitle>
-                  <CardDescription>
-                    Inicie consultas por vídeo chamada ou chat
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant="outline">Iniciar Consulta</Button>
-                </CardContent>
-              </Card>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("online-consultation")}>
+                  <CardHeader>
+                    <Video className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Consulta Online</CardTitle>
+                    <CardDescription>
+                      Inicie consultas por vídeo chamada ou chat
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" variant="outline">Iniciar Consulta</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/whatsapp-transcriptions")}>
-                <CardHeader>
-                  <MessageSquareText className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Transcrições WhatsApp</CardTitle>
-                  <CardDescription>
-                    Gerencie prints de conversas do WhatsApp
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant="outline">Ver Transcrições</Button>
-                </CardContent>
-              </Card>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/whatsapp-transcriptions")}>
+                  <CardHeader>
+                    <MessageSquareText className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Transcrições WhatsApp</CardTitle>
+                    <CardDescription>
+                      Gerencie prints de conversas do WhatsApp
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" variant="outline">Ver Transcrições</Button>
+                  </CardContent>
+                </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("form-responses")}>
-                <CardHeader>
-                  <Mail className="h-8 w-8 mb-2 text-primary" />
-                  <CardTitle>Respostas Formulário</CardTitle>
-                  <CardDescription>
-                    Visualize mensagens enviadas pelo formulário de contato
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant="outline">Ver Mensagens</Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("form-responses")}>
+                  <CardHeader>
+                    <Mail className="h-8 w-8 mb-2 text-primary" />
+                    <CardTitle>Respostas Formulário</CardTitle>
+                    <CardDescription>
+                      Visualize mensagens enviadas pelo formulário de contato
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full" variant="outline">Ver Mensagens</Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
-          <TabsContent value="profile">
-            <Card>
-              <CardContent className="p-6">
-                {user?.id && <DoctorProfileForm userId={user.id} onProfileUpdated={() => {
-                  console.log("Doctor profile updated!");
-                  fetchDoctorProfile(user.id);
-                }} />}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="schedule">
-            <div className="grid gap-6 md:grid-cols-2">
+            <TabsContent value="profile">
               <Card>
-                <CardHeader>
-                  <CardTitle>Selecione uma Data</CardTitle>
-                  <CardDescription>Escolha o dia para gerenciar sua agenda</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    locale={ptBR}
-                    className="rounded-md border"
-                  />
+                <CardContent className="p-6">
+                  {user?.id && <DoctorProfileForm userId={user.id} onProfileUpdated={() => {
+                    console.log("Doctor profile updated!");
+                    fetchDoctorProfile(user.id);
+                  }} />}
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    Horários para {selectedDate ? format(selectedDate, "dd 'de' MMMM", { locale: ptBR }) : ""}
-                  </CardTitle>
-                  <CardDescription>
-                    {slots.length > 0 ? "Selecione horários para ações em massa" : "Nenhum horário cadastrado"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {loadingSlots ? (
-                    <div className="flex justify-center p-8">
-                      <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
-                  ) : (
-                    <>
-                      {slots.length > 0 && (
-                        <div className="flex items-center justify-between pb-2 border-b">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="select-all-slots"
-                              checked={selectedSlotIds.length === slots.length && slots.length > 0}
-                              onCheckedChange={(checked) => handleSelectAllSlots(checked as boolean)}
-                            />
-                            <Label htmlFor="select-all-slots">Selecionar Todos</Label>
-                          </div>
-                          {selectedSlotIds.length > 0 && (
-                            <div className="flex gap-2">
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={handleBulkDeleteSlots}
-                                disabled={loadingSlots}
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Excluir ({selectedSlotIds.length})
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleBulkToggleAvailability(true)}
-                                disabled={loadingSlots}
-                              >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Disponibilizar ({selectedSlotIds.length})
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleBulkToggleAvailability(false)}
-                                disabled={loadingSlots}
-                              >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Indisponibilizar ({selectedSlotIds.length})
-                              </Button>
+            <TabsContent value="schedule">
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Selecione uma Data</CardTitle>
+                    <CardDescription>Escolha o dia para gerenciar sua agenda</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      locale={ptBR}
+                      className="rounded-md border"
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      Horários para {selectedDate ? format(selectedDate, "dd 'de' MMMM", { locale: ptBR }) : ""}
+                    </CardTitle>
+                    <CardDescription>
+                      {slots.length > 0 ? "Selecione horários para ações em massa" : "Nenhum horário cadastrado"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {loadingSlots ? (
+                      <div className="flex justify-center p-8">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                      </div>
+                    ) : (
+                      <>
+                        {slots.length > 0 && (
+                          <div className="flex items-center justify-between pb-2 border-b">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="select-all-slots"
+                                checked={selectedSlotIds.length === slots.length && slots.length > 0}
+                                onCheckedChange={(checked) => handleSelectAllSlots(checked as boolean)}
+                              />
+                              <Label htmlFor="select-all-slots">Selecionar Todos</Label>
                             </div>
+                            {selectedSlotIds.length > 0 && (
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={handleBulkDeleteSlots}
+                                  disabled={loadingSlots}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Excluir ({selectedSlotIds.length})
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleBulkToggleAvailability(true)}
+                                  disabled={loadingSlots}
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  Disponibilizar ({selectedSlotIds.length})
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleBulkToggleAvailability(false)}
+                                  disabled={loadingSlots}
+                                >
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  Indisponibilizar ({selectedSlotIds.length})
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {slots.length > 0 ? (
+                          <div className="space-y-2 max-h-96 overflow-y-auto">
+                            {slots.map((slot) => (
+                              <div
+                                key={slot.id}
+                                className="flex items-center justify-between p-3 border rounded-lg"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id={`slot-${slot.id}`}
+                                    checked={selectedSlotIds.includes(slot.id)}
+                                    onCheckedChange={(checked) => handleSelectSlot(slot.id, checked as boolean)}
+                                  />
+                                  <Label htmlFor={`slot-${slot.id}`} className="font-medium">
+                                    {format(new Date(slot.start_time), "HH:mm")} - {format(new Date(slot.end_time), "HH:mm")}
+                                  </Label>
+                                </div>
+                                <Button
+                                  variant={slot.is_available ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => toggleSlotAvailability(slot.id, slot.is_available)}
+                                >
+                                  {slot.is_available ? "Disponível" : "Indisponível"}
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8">
+                            <p className="text-muted-foreground mb-4">
+                              Nenhum horário cadastrado para esta data
+                            </p>
+                            <Button onClick={createDefaultSlots} disabled={loadingSlots}>
+                              Gerar Horários Padrão (8:15-20:00, 45min)
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="appointments">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Consultas Agendadas</CardTitle>
+                  <CardDescription>Gerencie suas consultas</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {appointments.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      Nenhuma consulta agendada
+                    </p>
+                  ) : (
+                    appointments.map((apt) => (
+                      <div key={apt.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="font-medium text-lg">
+                              {apt.patient_profile?.full_name || 'Paciente Desconhecido'}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {format(new Date(apt.start_time), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                            </p>
+                          </div>
+                          <Badge variant={
+                            apt.status === 'confirmed' ? 'default' :
+                            apt.status === 'pending' ? 'secondary' :
+                            apt.status === 'completed' ? 'outline' : 'destructive'
+                          }>
+                            {apt.status === 'pending' ? 'Pendente' : 
+                             apt.status === 'confirmed' ? 'Confirmada' : 
+                             apt.status === 'completed' ? 'Concluída' : 'Cancelada'}
+                          </Badge>
+                        </div>
+                        
+                        <div className="space-y-2 text-sm text-muted-foreground mb-4">
+                          {apt.patient_profile?.whatsapp && (
+                            <p className="flex items-center gap-2">
+                              <Phone className="h-4 w-4 text-primary" />
+                              WhatsApp: <a href={`https://wa.me/${apt.patient_profile.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                {formatPhone(apt.patient_profile.whatsapp)}
+                              </a>
+                            </p>
+                          )}
+                          {(apt.patient_profile?.street || apt.patient_profile?.city) && (
+                            <p className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4 text-primary" />
+                              Endereço: {[
+                                apt.patient_profile.street && `${apt.patient_profile.street}${apt.patient_profile.street_number ? ', ' + apt.patient_profile.street_number : ''}`,
+                                apt.patient_profile.neighborhood,
+                                apt.patient_profile.city,
+                                apt.patient_profile.state
+                              ].filter(Boolean).join(' - ')}
+                              {apt.patient_profile.zip_code && ` - CEP: ${apt.patient_profile.zip_code}`}
+                            </p>
                           )}
                         </div>
-                      )}
 
-                      {slots.length > 0 ? (
-                        <div className="space-y-2 max-h-96 overflow-y-auto">
-                          {slots.map((slot) => (
-                            <div
-                              key={slot.id}
-                              className="flex items-center justify-between p-3 border rounded-lg"
-                            >
-                              <div className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={`slot-${slot.id}`}
-                                  checked={selectedSlotIds.includes(slot.id)}
-                                  onCheckedChange={(checked) => handleSelectSlot(slot.id, checked as boolean)}
-                                />
-                                <Label htmlFor={`slot-${slot.id}`} className="font-medium">
-                                  {format(new Date(slot.start_time), "HH:mm")} - {format(new Date(slot.end_time), "HH:mm")}
-                                </Label>
-                              </div>
-                              <Button
-                                variant={slot.is_available ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => toggleSlotAvailability(slot.id, slot.is_available)}
-                              >
-                                {slot.is_available ? "Disponível" : "Indisponível"}
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="text-center py-8">
-                          <p className="text-muted-foreground mb-4">
-                            Nenhum horário cadastrado para esta data
+                        {apt.notes && (
+                          <p className="text-sm mb-3">
+                            <span className="font-medium">Observações:</span> {apt.notes}
                           </p>
-                          <Button onClick={createDefaultSlots} disabled={loadingSlots}>
-                            Gerar Horários Padrão (8:15-20:00, 45min)
-                          </Button>
+                        )}
+                        <div className="flex gap-2">
+                          {apt.status === 'pending' && (
+                            <Button size="sm" onClick={() => updateAppointmentStatus(apt.id, 'confirmed')}>
+                              Confirmar
+                            </Button>
+                          )}
+                          {apt.status === 'confirmed' && (
+                            <Button size="sm" onClick={() => updateAppointmentStatus(apt.id, 'completed')}>
+                              Concluir
+                            </Button>
+                          )}
+                          {(apt.status === 'pending' || apt.status === 'confirmed') && (
+                            <Button size="sm" variant="outline" onClick={() => updateAppointmentStatus(apt.id, 'cancelled')}>
+                              Cancelar
+                            </Button>
+                          )}
                         </div>
-                      )}
-                    </>
+                      </div>
+                    ))
                   )}
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="appointments">
-            <Card>
-              <CardHeader>
-                <CardTitle>Consultas Agendadas</CardTitle>
-                <CardDescription>Gerencie suas consultas</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {appointments.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    Nenhuma consulta agendada
-                  </p>
-                ) : (
-                  appointments.map((apt) => (
-                    <div key={apt.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <p className="font-medium text-lg">
-                            {apt.patient_profile?.full_name || 'Paciente Desconhecido'}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {format(new Date(apt.start_time), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
-                          </p>
-                        </div>
-                        <Badge variant={
-                          apt.status === 'confirmed' ? 'default' :
-                          apt.status === 'pending' ? 'secondary' :
-                          apt.status === 'completed' ? 'outline' : 'destructive'
-                        }>
-                          {apt.status === 'pending' ? 'Pendente' : 
-                           apt.status === 'confirmed' ? 'Confirmada' : 
-                           apt.status === 'completed' ? 'Concluída' : 'Cancelada'}
-                        </Badge>
-                      </div>
-                      
-                      <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                        {apt.patient_profile?.whatsapp && (
-                          <p className="flex items-center gap-2">
-                            <Phone className="h-4 w-4 text-primary" />
-                            WhatsApp: <a href={`https://wa.me/${apt.patient_profile.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                              {formatPhone(apt.patient_profile.whatsapp)}
-                            </a>
-                          </p>
-                        )}
-                        {(apt.patient_profile?.street || apt.patient_profile?.city) && (
-                          <p className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-primary" />
-                            Endereço: {[
-                              apt.patient_profile.street && `${apt.patient_profile.street}${apt.patient_profile.street_number ? ', ' + apt.patient_profile.street_number : ''}`,
-                              apt.patient_profile.neighborhood,
-                              apt.patient_profile.city,
-                              apt.patient_profile.state
-                            ].filter(Boolean).join(' - ')}
-                            {apt.patient_profile.zip_code && ` - CEP: ${apt.patient_profile.zip_code}`}
-                          </p>
-                        )}
-                      </div>
-
-                      {apt.notes && (
-                        <p className="text-sm mb-3">
-                          <span className="font-medium">Observações:</span> {apt.notes}
-                        </p>
-                      )}
-                      <div className="flex gap-2">
-                        {apt.status === 'pending' && (
-                          <Button size="sm" onClick={() => updateAppointmentStatus(apt.id, 'confirmed')}>
-                            Confirmar
-                          </Button>
-                        )}
-                        {apt.status === 'confirmed' && (
-                          <Button size="sm" onClick={() => updateAppointmentStatus(apt.id, 'completed')}>
-                            Concluir
-                          </Button>
-                        )}
-                        {(apt.status === 'pending' || apt.status === 'confirmed') && (
-                          <Button size="sm" variant="outline" onClick={() => updateAppointmentStatus(apt.id, 'cancelled')}>
-                            Cancelar
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="patients">
-            <Card>
-              <CardHeader>
-                <CardTitle>Meus Pacientes</CardTitle>
-                <CardDescription>Lista completa de pacientes com todos os dados</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {patients.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    Nenhum paciente encontrado
-                  </p>
-                ) : (
-                  <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-                    {patients.map((patient) => (
-                      <div key={patient.id} className="border rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-lg mb-3">{patient.full_name}</p>
-                            
-                            <div className="space-y-2 text-sm">
-                              <div className="flex items-start gap-2">
-                                <span className="font-medium text-muted-foreground flex-shrink-0">Data de Cadastro:</span>
-                                <span className="flex-grow">{patient.created_at ? format(new Date(patient.created_at), "dd/MM/yyyy", { locale: ptBR }) : '-'}</span>
-                              </div>
+            <TabsContent value="patients">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Meus Pacientes</CardTitle>
+                  <CardDescription>Lista completa de pacientes com todos os dados</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {patients.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      Nenhum paciente encontrado
+                    </p>
+                  ) : (
+                    <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                      {patients.map((patient) => (
+                        <div key={patient.id} className="border rounded-lg p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-lg mb-3">{patient.full_name}</p>
                               
-                              <div className="flex items-start gap-2">
-                                <span className="font-medium text-muted-foreground flex-shrink-0">WhatsApp:</span>
-                                <span className="flex-grow">{patient.whatsapp ? formatPhone(patient.whatsapp) : '-'}</span>
-                              </div>
-                              
-                              <div className="flex items-start gap-2">
-                                <span className="font-medium text-muted-foreground flex-shrink-0">Endereço:</span>
-                                <span className="flex-grow">
-                                  {[
-                                        patient.street && `${patient.street}${patient.street_number ? ', ' + patient.street_number : ''}`,
-                                        patient.neighborhood,
-                                        patient.city,
-                                        patient.state
-                                      ].filter(Boolean).join(' - ')}
-                                      {patient.zip_code && ` - CEP: ${patient.zip_code}`}
-                                </span>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-muted-foreground flex-shrink-0">Data de Cadastro:</span>
+                                  <span className="flex-grow">{patient.created_at ? format(new Date(patient.created_at), "dd/MM/yyyy", { locale: ptBR }) : '-'}</span>
+                                </div>
+                                
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-muted-foreground flex-shrink-0">WhatsApp:</span>
+                                  <span className="flex-grow">{patient.whatsapp ? formatPhone(patient.whatsapp) : '-'}</span>
+                                </div>
+                                
+                                <div className="flex items-start gap-2">
+                                  <span className="font-medium text-muted-foreground flex-shrink-0">Endereço:</span>
+                                  <span className="flex-grow">
+                                    {[
+                                          patient.street && `${patient.street}${patient.street_number ? ', ' + patient.street_number : ''}`,
+                                          patient.neighborhood,
+                                          patient.city,
+                                          patient.state
+                                        ].filter(Boolean).join(' - ')}
+                                        {patient.zip_code && ` - CEP: ${patient.zip_code}`}
+                                  </span>
+                                </div>
                               </div>
                             </div>
+                            
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedPatient(patient);
+                                setEditDialogOpen(true);
+                              }}
+                              className="ml-4 flex-shrink-0"
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              Editar
+                            </Button>
                           </div>
-                          
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedPatient(patient);
-                              setEditDialogOpen(true);
-                            }}
-                            className="ml-4 flex-shrink-0"
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Editar
-                          </Button>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          <TabsContent value="medical-records"> {/* Nova Aba de Prontuários */}
-            {user && <DoctorMedicalRecordsTab currentUserId={user.id} />}
-          </TabsContent>
+            <TabsContent value="medical-records"> {/* Nova Aba de Prontuários */}
+              {user && <DoctorMedicalRecordsTab currentUserId={user.id} />}
+            </TabsContent>
 
-          <TabsContent value="online-consultation">
-            {user && <DoctorOnlineConsultationTab currentUserId={user.id} />}
-          </TabsContent>
+            <TabsContent value="online-consultation">
+              {user && <DoctorOnlineConsultationTab currentUserId={user.id} />}
+            </TabsContent>
 
-          <TabsContent value="whatsapp-transcriptions">
-            <WhatsappTranscriptionsPage />
-          </TabsContent>
+            <TabsContent value="whatsapp-transcriptions">
+              <WhatsappTranscriptionsPage />
+            </TabsContent>
 
-          <TabsContent value="form-responses">
-            {user && <DoctorFormResponsesTab />}
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="form-responses">
+              {user && <DoctorFormResponsesTab />}
+            </TabsContent>
+          </div>
+        </div>
       </main>
 
       <Footer />
