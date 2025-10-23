@@ -107,8 +107,8 @@ const ContactSection = () => {
       zip_code: formData.zip_code || null,
       state: formData.state || 'Não Informado', // Garante valor padrão se vazio
       city: formData.city || 'Não Informado', // Garante valor padrão se vazio
-      street: formData.street || null,
-      street_number: formData.street_number || null,
+      street: formData.street || null, // Envia null se a string for vazia
+      street_number: formData.street_number || null, // Envia null se a string for vazia
       neighborhood: formData.neighborhood || null, // Envia null se a string for vazia
       receive_email_newsletter: formData.receive_email_newsletter,
       receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
