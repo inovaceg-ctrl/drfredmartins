@@ -186,6 +186,17 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
       // Parse birth_date from dd-mm-yyyy to yyyy-MM-dd for Supabase
       const parsedBirthDate = parseDateFromInput(formData.birth_date);
 
+      // Add validation feedback for birth_date
+      if (formData.birth_date && !parsedBirthDate) {
+        toast({
+          title: "Erro de Data",
+          description: "O formato da data de nascimento deve ser DD-MM-AAAA e ser uma data válida.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return; // Stop submission if date is invalid
+      }
+
       // Update profile
       const { error: profileError } = await (supabase as any)
         .from('profiles')
