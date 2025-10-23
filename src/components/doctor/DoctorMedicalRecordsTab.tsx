@@ -7,12 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, User, CalendarDays, BookOpen, MessageSquareText, ClipboardList, CheckCircle, XCircle, Stethoscope, FileText, Edit } from "lucide-react";
+import { Loader2, User, CalendarDays, BookOpen, MessageSquareText, ClipboardList, CheckCircle, XCircle, Stethoscope, FileText, Edit, LayoutGrid } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { EditMedicalRecordDialog } from "./EditMedicalRecordDialog"; // Importar o novo diálogo
+import { EditMedicalRecordDialog } from "./EditMedicalRecordDialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Importar Tabs
 
 type PatientProfile = Database['public']['Tables']['profiles']['Row'];
 type Session = Database['public']['Tables']['sessions']['Row'];
@@ -44,6 +45,7 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
 
   const [isEditRecordDialogOpen, setIsEditRecordDialogOpen] = useState(false);
   const [recordToEdit, setRecordToEdit] = useState<MedicalRecord | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState("overview"); // Novo estado para as sub-abas
 
   // Fetch all patients for the doctor
   const { data: patients, isLoading: isLoadingPatients } = useQuery({
@@ -263,224 +265,325 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
       </Card>
 
       {selectedPatientId && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Patient Profile Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-primary" />
-                Dados do Paciente
-              </CardTitle>
-              <CardDescription>Informações pessoais e terapêuticas do paciente.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              {isLoadingSelectedPatient ? (
-                <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
-              ) : selectedPatientProfile ? (
-                <>
-                  <p><span className="font-semibold">Nome:</span> {selectedPatientProfile.full_name}</p>
-                  <p><span className="font-semibold">Email:</span> {selectedPatientProfile.email}</p>
-                  <p><span className="font-semibold">WhatsApp:</span> {selectedPatientProfile.whatsapp || '-'}</p>
-                  <p><span className="font-semibold">Data Nasc.:</span> {selectedPatientProfile.birth_date ? format(new Date(selectedPatientProfile.birth_date), 'dd/MM/yyyy') : '-'}</p>
-                  <p><span className="font-semibold">Endereço:</span> {[selectedPatientProfile.street, selectedPatientProfile.street_number, selectedPatientProfile.neighborhood, selectedPatientProfile.city, selectedPatientProfile.state, selectedPatientProfile.zip_code].filter(Boolean).join(', ') || '-'}</p>
-                  
-                  <h4 className="font-semibold mt-4 border-t pt-3">Histórico Terapêutico</h4>
-                  <p><span className="font-semibold">Hist. Saúde Mental:</span> {selectedPatientProfile.mental_health_history || '-'}</p>
-                  <p><span className="font-semibold">Queixas Principais:</span> {selectedPatientProfile.main_complaints || '-'}</p>
-                  <p><span className="font-semibold">Diagnósticos Anteriores:</span> {selectedPatientProfile.previous_diagnoses || '-'}</p>
-                  <p><span className="font-semibold">Medicamentos Atuais:</span> {selectedPatientProfile.current_medications || '-'}</p>
-                  <p><span className="font-semibold">Hist. Sessões Passadas:</span> {selectedPatientProfile.past_sessions_history || '-'}</p>
-                  <p className="flex items-center gap-2"><span className="font-semibold">Consentimento Assinado:</span> {selectedPatientProfile.consent_status ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />} {selectedPatientProfile.consent_date ? `em ${format(new Date(selectedPatientProfile.consent_date), 'dd/MM/yyyy')}` : ''}</p>
-                  <p><span className="font-semibold">Terapeuta Principal:</span> {doctors?.find(d => d.id === selectedPatientProfile.therapist_id)?.full_name || '-'}</p>
-                </>
-              ) : (
-                <p className="text-muted-foreground">Nenhum perfil encontrado.</p>
-              )}
-            </CardContent>
-          </Card>
+        <Tabs value={activeSubTab} onValueChange={setActiveSubTab} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 bg-muted p-1 rounded-lg border">
+            <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap">
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Visão Geral
+            </TabsTrigger>
+            <TabsTrigger value="add-session" className="px-3 py-2 text-sm whitespace-nowrap">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Registrar Sessão
+            </TabsTrigger>
+            <TabsTrigger value="add-medical-record" className="px-3 py-2 text-sm whitespace-nowrap">
+              <FileText className="h-4 w-4 mr-2" />
+              Registrar Prontuário
+            </TabsTrigger>
+            <TabsTrigger value="sessions-history" className="px-3 py-2 text-sm whitespace-nowrap">
+              <ClipboardList className="h-4 w-4 mr-2" />
+              Histórico de Sessões
+            </TabsTrigger>
+            <TabsTrigger value="medical-records-history" className="px-3 py-2 text-sm whitespace-nowrap">
+              <Stethoscope className="h-4 w-4 mr-2" />
+              Histórico de Prontuários
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Add New Session Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
-                Registrar Nova Sessão de Terapia
-              </CardTitle>
-              <CardDescription>Adicione os detalhes de uma nova sessão de terapia.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleAddSession} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="session_date">Data da Sessão *</Label>
-                  <Input
-                    id="session_date"
-                    type="datetime-local"
-                    value={newSessionData.session_date}
-                    onChange={(e) => setNewSessionData({ ...newSessionData, session_date: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="session_theme">Tema da Sessão</Label>
-                  <Input
-                    id="session_theme"
-                    value={newSessionData.session_theme}
-                    onChange={(e) => setNewSessionData({ ...newSessionData, session_theme: e.target.value })}
-                    placeholder="Ex: Ansiedade, Relacionamento"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="interventions_used">Intervenções Utilizadas</Label>
-                  <Textarea
-                    id="interventions_used"
-                    value={newSessionData.interventions_used}
-                    onChange={(e) => setNewSessionData({ ...newSessionData, interventions_used: e.target.value })}
-                    placeholder="Técnicas e abordagens utilizadas..."
-                    rows={3}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Notas sobre o Estado Emocional</Label>
-                  <Textarea
-                    id="notes"
-                    value={newSessionData.notes}
-                    onChange={(e) => setNewSessionData({ ...newSessionData, notes: e.target.value })}
-                    placeholder="Observações sobre o paciente durante a sessão..."
-                    rows={4}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="homework">Tarefas de Casa</Label>
-                  <Textarea
-                    id="homework"
-                    value={newSessionData.homework}
-                    onChange={(e) => setNewSessionData({ ...newSessionData, homework: e.target.value })}
-                    placeholder="Atividades ou reflexões recomendadas para o paciente..."
-                    rows={3}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={addingSession}>
-                  {addingSession && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Registrar Sessão
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+          <TabsContent value="overview">
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Patient Profile Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-primary" />
+                    Dados do Paciente
+                  </CardTitle>
+                  <CardDescription>Informações pessoais e terapêuticas do paciente.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  {isLoadingSelectedPatient ? (
+                    <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                  ) : selectedPatientProfile ? (
+                    <>
+                      <p><span className="font-semibold">Nome:</span> {selectedPatientProfile.full_name}</p>
+                      <p><span className="font-semibold">Email:</span> {selectedPatientProfile.email}</p>
+                      <p><span className="font-semibold">WhatsApp:</span> {selectedPatientProfile.whatsapp || '-'}</p>
+                      <p><span className="font-semibold">Data Nasc.:</span> {selectedPatientProfile.birth_date ? format(new Date(selectedPatientProfile.birth_date), 'dd/MM/yyyy') : '-'}</p>
+                      <p><span className="font-semibold">Endereço:</span> {[selectedPatientProfile.street, selectedPatientProfile.street_number, selectedPatientProfile.neighborhood, selectedPatientProfile.city, selectedPatientProfile.state, selectedPatientProfile.zip_code].filter(Boolean).join(', ') || '-'}</p>
+                      
+                      <h4 className="font-semibold mt-4 border-t pt-3">Histórico Terapêutico</h4>
+                      <p><span className="font-semibold">Hist. Saúde Mental:</span> {selectedPatientProfile.mental_health_history || '-'}</p>
+                      <p><span className="font-semibold">Queixas Principais:</span> {selectedPatientProfile.main_complaints || '-'}</p>
+                      <p><span className="font-semibold">Diagnósticos Anteriores:</span> {selectedPatientProfile.previous_diagnoses || '-'}</p>
+                      <p><span className="font-semibold">Medicamentos Atuais:</span> {selectedPatientProfile.current_medications || '-'}</p>
+                      <p><span className="font-semibold">Hist. Sessões Passadas:</span> {selectedPatientProfile.past_sessions_history || '-'}</p>
+                      <p className="flex items-center gap-2"><span className="font-semibold">Consentimento Assinado:</span> {selectedPatientProfile.consent_status ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-red-500" />} {selectedPatientProfile.consent_date ? `em ${format(new Date(selectedPatientProfile.consent_date), 'dd/MM/yyyy')}` : ''}</p>
+                      <p><span className="font-semibold">Terapeuta Principal:</span> {doctors?.find(d => d.id === selectedPatientProfile.therapist_id)?.full_name || '-'}</p>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">Nenhum perfil encontrado.</p>
+                  )}
+                </CardContent>
+              </Card>
 
-          {/* Add New Medical Record Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                Registrar Prontuário Médico
-              </CardTitle>
-              <CardDescription>Adicione um novo diagnóstico, prescrição ou notas gerais.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleAddMedicalRecord} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="diagnosis">Diagnóstico</Label>
-                  <Input
-                    id="diagnosis"
-                    value={newMedicalRecordData.diagnosis}
-                    onChange={(e) => setNewMedicalRecordData({ ...newMedicalRecordData, diagnosis: e.target.value })}
-                    placeholder="Ex: Transtorno de Ansiedade Generalizada"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="prescription">Prescrição</Label>
-                  <Textarea
-                    id="prescription"
-                    value={newMedicalRecordData.prescription}
-                    onChange={(e) => setNewMedicalRecordData({ ...newMedicalRecordData, prescription: e.target.value })}
-                    placeholder="Medicamentos, dosagem, frequência..."
-                    rows={3}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="medical_notes">Notas Médicas Gerais</Label>
-                  <Textarea
-                    id="medical_notes"
-                    value={newMedicalRecordData.notes}
-                    onChange={(e) => setNewMedicalRecordData({ ...newMedicalRecordData, notes: e.target.value })}
-                    placeholder="Observações gerais sobre o estado de saúde do paciente..."
-                    rows={4}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={addingMedicalRecord}>
-                  {addingMedicalRecord && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Registrar Prontuário
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+              {/* Sessions History Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ClipboardList className="h-5 w-5 text-primary" />
+                    Histórico de Sessões de Terapia
+                  </CardTitle>
+                  <CardDescription>Todas as sessões de terapia registradas para este paciente.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
+                  {isLoadingSessions ? (
+                    <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                  ) : patientSessions && patientSessions.length > 0 ? (
+                    patientSessions.map((session) => (
+                      <div key={session.id} className="border rounded-lg p-4 space-y-2">
+                        <p className="font-semibold text-lg flex items-center gap-2">
+                          <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                          {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                        </p>
+                        {session.session_theme && <p><span className="font-medium">Tema:</span> {session.session_theme}</p>}
+                        {session.interventions_used && <p><span className="font-medium">Intervenções:</span> {session.interventions_used}</p>}
+                        {session.notes && <p><span className="font-medium">Notas:</span> {session.notes}</p>}
+                        {session.homework && <p><span className="font-medium">Tarefas:</span> {session.homework}</p>}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground text-center py-4">Nenhuma sessão registrada para este paciente.</p>
+                  )}
+                </CardContent>
+              </Card>
 
-          {/* Sessions History Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-primary" />
-                Histórico de Sessões de Terapia
-              </CardTitle>
-              <CardDescription>Todas as sessões de terapia registradas para este paciente.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
-              {isLoadingSessions ? (
-                <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
-              ) : patientSessions && patientSessions.length > 0 ? (
-                patientSessions.map((session) => (
-                  <div key={session.id} className="border rounded-lg p-4 space-y-2">
-                    <p className="font-semibold text-lg flex items-center gap-2">
-                      <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                      {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
-                    </p>
-                    {session.session_theme && <p><span className="font-medium">Tema:</span> {session.session_theme}</p>}
-                    {session.interventions_used && <p><span className="font-medium">Intervenções:</span> {session.interventions_used}</p>}
-                    {session.notes && <p><span className="font-medium">Notas:</span> {session.notes}</p>}
-                    {session.homework && <p><span className="font-medium">Tarefas:</span> {session.homework}</p>}
+              {/* Medical Records History Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Stethoscope className="h-5 w-5 text-primary" />
+                    Histórico de Prontuários Médicos
+                  </CardTitle>
+                  <CardDescription>Todos os prontuários médicos gerais registrados para este paciente.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
+                  {isLoadingMedicalRecords ? (
+                    <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                  ) : patientMedicalRecords && patientMedicalRecords.length > 0 ? (
+                    patientMedicalRecords.map((record) => (
+                      <div key={record.id} className="border rounded-lg p-4 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <p className="font-semibold text-lg flex items-center gap-2">
+                            <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                            {format(new Date(record.created_at!), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                          </p>
+                          <Button variant="outline" size="sm" onClick={() => handleEditRecord(record)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {record.diagnosis && <p><span className="font-medium">Diagnóstico:</span> {record.diagnosis}</p>}
+                        {record.prescription && <p><span className="font-medium">Prescrição:</span> {record.prescription}</p>}
+                        {record.notes && <p><span className="font-medium">Notas:</span> {record.notes}</p>}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground text-center py-4">Nenhum prontuário médico registrado para este paciente.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="add-session">
+            {/* Add New Session Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Registrar Nova Sessão de Terapia
+                </CardTitle>
+                <CardDescription>Adicione os detalhes de uma nova sessão de terapia.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddSession} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="session_date">Data da Sessão *</Label>
+                    <Input
+                      id="session_date"
+                      type="datetime-local"
+                      value={newSessionData.session_date}
+                      onChange={(e) => setNewSessionData({ ...newSessionData, session_date: e.target.value })}
+                      required
+                    />
                   </div>
-                ))
-              ) : (
-                <p className="text-muted-foreground text-center py-4">Nenhuma sessão registrada para este paciente.</p>
-              )}
-            </CardContent>
-          </Card>
+                  <div className="space-y-2">
+                    <Label htmlFor="session_theme">Tema da Sessão</Label>
+                    <Input
+                      id="session_theme"
+                      value={newSessionData.session_theme}
+                      onChange={(e) => setNewSessionData({ ...newSessionData, session_theme: e.target.value })}
+                      placeholder="Ex: Ansiedade, Relacionamento"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="interventions_used">Intervenções Utilizadas</Label>
+                    <Textarea
+                      id="interventions_used"
+                      value={newSessionData.interventions_used}
+                      onChange={(e) => setNewSessionData({ ...newSessionData, interventions_used: e.target.value })}
+                      placeholder="Técnicas e abordagens utilizadas..."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="notes">Notas sobre o Estado Emocional</Label>
+                    <Textarea
+                      id="notes"
+                      value={newSessionData.notes}
+                      onChange={(e) => setNewSessionData({ ...newSessionData, notes: e.target.value })}
+                      placeholder="Observações sobre o paciente durante a sessão..."
+                      rows={4}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="homework">Tarefas de Casa</Label>
+                    <Textarea
+                      id="homework"
+                      value={newSessionData.homework}
+                      onChange={(e) => setNewSessionData({ ...newSessionData, homework: e.target.value })}
+                      placeholder="Atividades ou reflexões recomendadas para o paciente..."
+                      rows={3}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={addingSession}>
+                    {addingSession && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Registrar Sessão
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          {/* Medical Records History Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Stethoscope className="h-5 w-5 text-primary" />
-                Histórico de Prontuários Médicos
-              </CardTitle>
-              <CardDescription>Todos os prontuários médicos gerais registrados para este paciente.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
-              {isLoadingMedicalRecords ? (
-                <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
-              ) : patientMedicalRecords && patientMedicalRecords.length > 0 ? (
-                patientMedicalRecords.map((record) => (
-                  <div key={record.id} className="border rounded-lg p-4 space-y-2">
-                    <div className="flex justify-between items-center">
+          <TabsContent value="add-medical-record">
+            {/* Add New Medical Record Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Registrar Prontuário Médico
+                </CardTitle>
+                <CardDescription>Adicione um novo diagnóstico, prescrição ou notas gerais.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddMedicalRecord} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="diagnosis">Diagnóstico</Label>
+                    <Input
+                      id="diagnosis"
+                      value={newMedicalRecordData.diagnosis}
+                      onChange={(e) => setNewMedicalRecordData({ ...newMedicalRecordData, diagnosis: e.target.value })}
+                      placeholder="Ex: Transtorno de Ansiedade Generalizada"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="prescription">Prescrição</Label>
+                    <Textarea
+                      id="prescription"
+                      value={newMedicalRecordData.prescription}
+                      onChange={(e) => setNewMedicalRecordData({ ...newMedicalRecordData, prescription: e.target.value })}
+                      placeholder="Medicamentos, dosagem, frequência..."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="medical_notes">Notas Médicas Gerais</Label>
+                    <Textarea
+                      id="medical_notes"
+                      value={newMedicalRecordData.notes}
+                      onChange={(e) => setNewMedicalRecordData({ ...newMedicalRecordData, notes: e.target.value })}
+                      placeholder="Observações gerais sobre o estado de saúde do paciente..."
+                      rows={4}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={addingMedicalRecord}>
+                    {addingMedicalRecord && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Registrar Prontuário
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="sessions-history">
+            {/* Sessions History Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ClipboardList className="h-5 w-5 text-primary" />
+                  Histórico de Sessões de Terapia
+                </CardTitle>
+                <CardDescription>Todas as sessões de terapia registradas para este paciente.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
+                {isLoadingSessions ? (
+                  <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                ) : patientSessions && patientSessions.length > 0 ? (
+                  patientSessions.map((session) => (
+                    <div key={session.id} className="border rounded-lg p-4 space-y-2">
                       <p className="font-semibold text-lg flex items-center gap-2">
                         <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                        {format(new Date(record.created_at!), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                        {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
                       </p>
-                      <Button variant="outline" size="sm" onClick={() => handleEditRecord(record)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      {session.session_theme && <p><span className="font-medium">Tema:</span> {session.session_theme}</p>}
+                      {session.interventions_used && <p><span className="font-medium">Intervenções:</span> {session.interventions_used}</p>}
+                      {session.notes && <p><span className="font-medium">Notas:</span> {session.notes}</p>}
+                      {session.homework && <p><span className="font-medium">Tarefas:</span> {session.homework}</p>}
                     </div>
-                    {record.diagnosis && <p><span className="font-medium">Diagnóstico:</span> {record.diagnosis}</p>}
-                    {record.prescription && <p><span className="font-medium">Prescrição:</span> {record.prescription}</p>}
-                    {record.notes && <p><span className="font-medium">Notas:</span> {record.notes}</p>}
-                  </div>
-                ))
-              ) : (
-                <p className="text-muted-foreground text-center py-4">Nenhum prontuário médico registrado para este paciente.</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">Nenhuma sessão registrada para este paciente.</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="medical-records-history">
+            {/* Medical Records History Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5 text-primary" />
+                  Histórico de Prontuários Médicos
+                </CardTitle>
+                <CardDescription>Todos os prontuários médicos gerais registrados para este paciente.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
+                {isLoadingMedicalRecords ? (
+                  <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                ) : patientMedicalRecords && patientMedicalRecords.length > 0 ? (
+                  patientMedicalRecords.map((record) => (
+                    <div key={record.id} className="border rounded-lg p-4 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <p className="font-semibold text-lg flex items-center gap-2">
+                          <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                          {format(new Date(record.created_at!), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                        </p>
+                        <Button variant="outline" size="sm" onClick={() => handleEditRecord(record)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {record.diagnosis && <p><span className="font-medium">Diagnóstico:</span> {record.diagnosis}</p>}
+                      {record.prescription && <p><span className="font-medium">Prescrição:</span> {record.prescription}</p>}
+                      {record.notes && <p><span className="font-medium">Notas:</span> {record.notes}</p>}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">Nenhum prontuário médico registrado para este paciente.</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       )}
 
       {recordToEdit && (
