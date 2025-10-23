@@ -443,7 +443,7 @@ const Doctor = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="flex flex-nowrap overflow-x-auto scrollbar-hide bg-muted p-1 rounded-lg border md:flex-row md:justify-start">
+          <TabsList className="flex flex-col bg-muted p-1 rounded-lg border md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start">
             <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
               <BarChart3 className="h-4 w-4 mr-2" />
               Visão Geral
