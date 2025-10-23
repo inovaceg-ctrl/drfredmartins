@@ -490,10 +490,10 @@ const Doctor = () => {
               <MessageSquare className="h-4 w-4 mr-2" />
               Consulta Online
             </TabsTrigger>
-            <TabsTrigger value="whatsapp-transcriptions" className="px-3 py-2 text-sm whitespace-nowrap">
+            {/* REMOVIDO: <TabsTrigger value="whatsapp-transcriptions" className="px-3 py-2 text-sm whitespace-nowrap">
               <MessageSquareText className="h-4 w-4 mr-2" />
               Transcrições WhatsApp
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger value="newsletter-subscriptions" className="px-3 py-2 text-sm whitespace-nowrap">
               <Mail className="h-4 w-4 mr-2" />
               Newsletter
@@ -513,7 +513,7 @@ const Doctor = () => {
                   {activeTab === "patients" && "Pacientes"}
                   {activeTab === "medical-records" && "Prontuários"}
                   {activeTab === "online-consultation" && "Consulta Online"}
-                  {activeTab === "whatsapp-transcriptions" && "Transcrições WhatsApp"}
+                  {/* REMOVIDO: {activeTab === "whatsapp-transcriptions" && "Transcrições WhatsApp"} */}
                   {activeTab === "newsletter-subscriptions" && "Newsletter"}
                 </Button>
               </DrawerTrigger>
@@ -552,10 +552,10 @@ const Doctor = () => {
                       <MessageSquare className="h-4 w-4 mr-2" />
                       Consulta Online
                     </TabsTrigger>
-                    <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("whatsapp-transcriptions")}>
+                    {/* REMOVIDO: <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("whatsapp-transcriptions")}>
                       <MessageSquareText className="h-4 w-4 mr-2" />
                       Transcrições WhatsApp
-                    </TabsTrigger>
+                    </TabsTrigger> */}
                     <TabsTrigger value="newsletter-subscriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("newsletter-subscriptions")}>
                       <Mail className="h-4 w-4 mr-2" />
                       Newsletter
@@ -651,7 +651,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/whatsapp-transcriptions")}>
+              {/* REMOVIDO: <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/whatsapp-transcriptions")}>
                 <CardHeader>
                   <MessageSquareText className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Transcrições WhatsApp</CardTitle>
@@ -662,7 +662,7 @@ const Doctor = () => {
                 <CardContent>
                   <Button className="w-full" variant="outline">Ver Transcrições</Button>
                 </CardContent>
-              </Card>
+              </Card> */}
 
               <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("newsletter-subscriptions")}>
                 <CardHeader>
@@ -979,9 +979,9 @@ const Doctor = () => {
             {user && <DoctorOnlineConsultationTab currentUserId={user.id} />}
           </TabsContent>
 
-          <TabsContent value="whatsapp-transcriptions">
+          {/* REMOVIDO: <TabsContent value="whatsapp-transcriptions">
             <WhatsappTranscriptionsPage />
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value="newsletter-subscriptions">
             <DoctorNewsletterSubscriptionsTab />
