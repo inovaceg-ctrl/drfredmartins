@@ -443,40 +443,40 @@ const Doctor = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="flex flex-col bg-muted p-1 rounded-lg border md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start">
-            <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
+            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <BarChart3 className="h-4 w-4 mr-2" />
               Visão Geral
             </TabsTrigger>
-            <TabsTrigger value="profile" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <UserIcon className="h-4 w-4 mr-2" />
               Perfil
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <CalendarIcon className="h-4 w-4 mr-2" />
               Agenda
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Clock className="h-4 w-4 mr-2" />
               Consultas
             </TabsTrigger>
-            <TabsTrigger value="patients" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Users className="h-4 w-4 mr-2" />
               Pacientes
             </TabsTrigger>
-            <TabsTrigger value="medical-records" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <BookOpen className="h-4 w-4 mr-2" /> {/* Novo ícone */}
               Prontuários
             </TabsTrigger>
-            <TabsTrigger value="online-consultation" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <MessageSquare className="h-4 w-4 mr-2" />
               Consulta Online
             </TabsTrigger>
-            <TabsTrigger value="whatsapp-transcriptions" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <MessageSquareText className="h-4 w-4 mr-2" />
               Transcrições WhatsApp
             </TabsTrigger>
-            <TabsTrigger value="form-responses" className="px-3 py-2 text-sm whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base">
+            <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Mail className="h-4 w-4 mr-2" />
               Respostas Formulário
             </TabsTrigger>
