@@ -23,6 +23,7 @@ import { Database } from "@/integrations/supabase/types";
 import { WhatsappTranscriptionsPage } from "@/pages/WhatsappTranscriptionsPage";
 import { DoctorFormResponsesTab } from "@/components/DoctorFormResponsesTab";
 import { DoctorMedicalRecordsTab } from "@/components/doctor/DoctorMedicalRecordsTab"; // Importar o novo componente
+import { formatDateToDisplay } from "@/lib/utils"; // Import formatDateToDisplay
 import {
   Drawer,
   DrawerClose,
@@ -925,7 +926,7 @@ const Doctor = () => {
                               {patient.birth_date && (
                                 <div className="flex items-start gap-2">
                                   <span className="font-medium text-muted-foreground flex-shrink-0">Data de Nasc.:</span>
-                                  <span className="flex-grow">{format(new Date(patient.birth_date), "dd/MM/yyyy", { locale: ptBR })}</span>
+                                  <span className="flex-grow">{formatDateToDisplay(patient.birth_date)}</span>
                                 </div>
                               )}
 
