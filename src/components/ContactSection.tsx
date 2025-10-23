@@ -96,7 +96,7 @@ const ContactSection = () => {
     setIsSending(true);
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert({
           name: formData.name,
@@ -113,12 +113,14 @@ const ContactSection = () => {
           receive_email_newsletter: formData.receive_email_newsletter,
           receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
           content: formData.message,
-        });
+        })
+        .select(); // Adicionado .select() para obter os dados inseridos de volta
 
       if (error) {
         throw error;
       }
 
+      console.log("Mensagem enviada com sucesso:", data); // Log para depuração
       toast({
         title: "Mensagem Enviada!",
         description: "Sua mensagem foi enviada com sucesso. Em breve entraremos em contato.",
