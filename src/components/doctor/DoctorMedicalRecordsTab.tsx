@@ -15,6 +15,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { EditMedicalRecordDialog } from "./EditMedicalRecordDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EditPatientDialog } from "@/components/EditPatientDialog"; // Importar o diálogo de edição de paciente
+import { EditTherapySessionDialog } from "./EditTherapySessionDialog"; // Importar o novo diálogo de edição de sessão
 
 type PatientProfile = Database['public']['Tables']['profiles']['Row'];
 type Session = Database['public']['Tables']['sessions']['Row'];
@@ -49,6 +50,9 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
   const [activeSubTab, setActiveSubTab] = useState("overview");
 
   const [isEditPatientDialogOpen, setIsEditPatientDialogOpen] = useState(false); // Estado para o diálogo de edição do paciente
+  
+  const [isEditSessionDialogOpen, setIsEditSessionDialogOpen] = useState(false); // Novo estado para o diálogo de edição de sessão
+  const [sessionToEdit, setSessionToEdit] = useState<Session | null>(null); // Novo estado para a sessão a ser editada
 
   // Fetch all patients for the doctor
   const { data: patients, isLoading: isLoadingPatients } = useQuery({
@@ -231,6 +235,15 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
     queryClient.invalidateQueries({ queryKey: ["patientMedicalRecords", selectedPatientId] });
   };
 
+  const handleEditSession = (session: Session) => { // Novo handler para edição de sessão
+    setSessionToEdit(session);
+    setIsEditSessionDialogOpen(true);
+  };
+
+  const handleSessionUpdated = () => { // Novo handler para atualização de sessão
+    queryClient.invalidateQueries({ queryKey: ["patientSessions", selectedPatientId] });
+  };
+
   const handlePatientProfileUpdated = () => {
     queryClient.invalidateQueries({ queryKey: ["patientProfile", selectedPatientId] });
     queryClient.invalidateQueries({ queryKey: ["doctorPatients", currentUserId] }); // Também invalida a lista de pacientes
@@ -346,10 +359,15 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
                     ) : patientSessions && patientSessions.length > 0 ? (
                       patientSessions.map((session) => (
                         <div key={session.id} className="border rounded-lg p-4 space-y-2">
-                          <p className="font-semibold text-lg flex items-center gap-2">
-                            <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                            {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
-                          </p>
+                          <div className="flex justify-between items-center">
+                            <p className="font-semibold text-lg flex items-center gap-2">
+                              <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                              {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                            </p>
+                            <Button variant="outline" size="sm" onClick={() => handleEditSession(session)}> {/* Botão de edição adicionado */}
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
                           {session.session_theme && <p><span className="font-medium">Tema:</span> {session.session_theme}</p>}
                           {session.interventions_used && <p><span className="font-medium">Intervenções:</span> {session.interventions_used}</p>}
                           {session.notes && <p><span className="font-medium">Notas:</span> {session.notes}</p>}
@@ -456,7 +474,7 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
                     <Textarea
                       id="homework"
                       value={newSessionData.homework}
-                      onChange={(e) => setNewSessionData({ ...newSessionData, homework: e.target.value })}
+                      onChange={(e) => setNewSessionData({ ...newSessionData.homework, homework: e.target.value })}
                       placeholder="Atividades ou reflexões recomendadas para o paciente..."
                       rows={3}
                     />
@@ -528,6 +546,15 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
           open={isEditRecordDialogOpen}
           onOpenChange={setIsEditRecordDialogOpen}
           onRecordUpdated={handleRecordUpdated}
+        />
+      )}
+
+      {sessionToEdit && ( // Renderiza o novo diálogo de edição de sessão
+        <EditTherapySessionDialog
+          session={sessionToEdit}
+          open={isEditSessionDialogOpen}
+          onOpenChange={setIsEditSessionDialogOpen}
+          onSessionUpdated={handleSessionUpdated}
         />
       )}
 
