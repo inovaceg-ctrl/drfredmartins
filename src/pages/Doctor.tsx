@@ -5,7 +5,7 @@ import { Session, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, Clock, FileText, LogOut, Users, Video, BarChart3, Loader2, Edit, User as UserIcon, MessageSquare, Trash2, CheckCircle, XCircle, MessageSquareText, MapPin, Phone, Mail, BookOpen } from "lucide-react"; // Adicionado BookOpen
+import { Calendar as CalendarIcon, Clock, FileText, LogOut, Users, Video, BarChart3, Loader2, Edit, User as UserIcon, MessageSquare, Trash2, CheckCircle, XCircle, MessageSquareText, MapPin, Phone, Mail, BookOpen, Menu } from "lucide-react"; // Adicionado Menu
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
@@ -23,6 +23,16 @@ import { Database } from "@/integrations/supabase/types";
 import { WhatsappTranscriptionsPage } from "@/pages/WhatsappTranscriptionsPage";
 import { DoctorFormResponsesTab } from "@/components/DoctorFormResponsesTab";
 import { DoctorMedicalRecordsTab } from "@/components/doctor/DoctorMedicalRecordsTab"; // Importar o novo componente
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const Doctor = () => {
   const navigate = useNavigate();
@@ -39,6 +49,7 @@ const Doctor = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [doctorProfile, setDoctorProfile] = useState<any>(null);
   const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Estado para controlar o Drawer
   const { toast } = useToast();
 
   useEffect(() => {
@@ -416,6 +427,11 @@ const Doctor = () => {
     navigate("/");
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setIsDrawerOpen(false); // Fecha o drawer ao selecionar uma aba
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -442,49 +458,121 @@ const Doctor = () => {
           </Button>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1 md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
-            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+          {/* Desktop TabsList */}
+          <TabsList className="hidden md:flex w-full bg-muted p-1 rounded-lg border space-x-1">
+            <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap">
               <BarChart3 className="h-4 w-4 mr-2" />
               Visão Geral
             </TabsTrigger>
-            <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="profile" className="px-3 py-2 text-sm whitespace-nowrap">
               <UserIcon className="h-4 w-4 mr-2" />
               Perfil
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="schedule" className="px-3 py-2 text-sm whitespace-nowrap">
               <CalendarIcon className="h-4 w-4 mr-2" />
               Agenda
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="appointments" className="px-3 py-2 text-sm whitespace-nowrap">
               <Clock className="h-4 w-4 mr-2" />
               Consultas
             </TabsTrigger>
-            <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="patients" className="px-3 py-2 text-sm whitespace-nowrap">
               <Users className="h-4 w-4 mr-2" />
               Pacientes
             </TabsTrigger>
-            <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
-              <BookOpen className="h-4 w-4 mr-2" /> {/* Novo ícone */}
+            <TabsTrigger value="medical-records" className="px-3 py-2 text-sm whitespace-nowrap">
+              <BookOpen className="h-4 w-4 mr-2" />
               Prontuários
             </TabsTrigger>
-            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="online-consultation" className="px-3 py-2 text-sm whitespace-nowrap">
               <MessageSquare className="h-4 w-4 mr-2" />
               Consulta Online
             </TabsTrigger>
-            <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="whatsapp-transcriptions" className="px-3 py-2 text-sm whitespace-nowrap">
               <MessageSquareText className="h-4 w-4 mr-2" />
               Transcrições WhatsApp
             </TabsTrigger>
-            <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="form-responses" className="px-3 py-2 text-sm whitespace-nowrap">
               <Mail className="h-4 w-4 mr-2" />
               Respostas Formulário
             </TabsTrigger>
           </TabsList>
 
+          {/* Mobile Drawer Menu */}
+          <div className="md:hidden mb-4">
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+              <DrawerTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  <Menu className="h-4 w-4 mr-2" />
+                  {activeTab === "overview" && "Visão Geral"}
+                  {activeTab === "profile" && "Perfil"}
+                  {activeTab === "schedule" && "Agenda"}
+                  {activeTab === "appointments" && "Consultas"}
+                  {activeTab === "patients" && "Pacientes"}
+                  {activeTab === "medical-records" && "Prontuários"}
+                  {activeTab === "online-consultation" && "Consulta Online"}
+                  {activeTab === "whatsapp-transcriptions" && "Transcrições WhatsApp"}
+                  {activeTab === "form-responses" && "Respostas Formulário"}
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="h-[80vh] rounded-t-[10px] flex flex-col">
+                <DrawerHeader className="text-left">
+                  <DrawerTitle>Navegação do Portal</DrawerTitle>
+                  <DrawerDescription>Selecione uma opção abaixo</DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 flex-1 overflow-y-auto">
+                  <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1">
+                    <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("overview")}>
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Visão Geral
+                    </TabsTrigger>
+                    <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("profile")}>
+                      <UserIcon className="h-4 w-4 mr-2" />
+                      Perfil
+                    </TabsTrigger>
+                    <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("schedule")}>
+                      <CalendarIcon className="h-4 w-4 mr-2" />
+                      Agenda
+                    </TabsTrigger>
+                    <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("appointments")}>
+                      <Clock className="h-4 w-4 mr-2" />
+                      Consultas
+                    </TabsTrigger>
+                    <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("patients")}>
+                      <Users className="h-4 w-4 mr-2" />
+                      Pacientes
+                    </TabsTrigger>
+                    <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("medical-records")}>
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Prontuários
+                    </TabsTrigger>
+                    <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("online-consultation")}>
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Consulta Online
+                    </TabsTrigger>
+                    <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("whatsapp-transcriptions")}>
+                      <MessageSquareText className="h-4 w-4 mr-2" />
+                      Transcrições WhatsApp
+                    </TabsTrigger>
+                    <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("form-responses")}>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Respostas Formulário
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+                <DrawerFooter>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Fechar</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+          </div>
+
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("profile")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("profile")}>
                 <CardHeader>
                   <UserIcon className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Meu Perfil</CardTitle>
@@ -497,7 +585,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("schedule")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("schedule")}>
                 <CardHeader>
                   <CalendarIcon className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Gerenciar Agenda</CardTitle>
@@ -510,7 +598,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("appointments")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("appointments")}>
                 <CardHeader>
                   <Clock className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Consultas Agendadas</CardTitle>
@@ -523,7 +611,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("patients")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("patients")}>
                 <CardHeader>
                   <Users className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Meus Pacientes</CardTitle>
@@ -536,7 +624,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("medical-records")}> {/* Novo Card */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("medical-records")}>
                 <CardHeader>
                   <BookOpen className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Prontuários</CardTitle>
@@ -549,7 +637,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("online-consultation")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("online-consultation")}>
                 <CardHeader>
                   <Video className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Consulta Online</CardTitle>
@@ -575,7 +663,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("form-responses")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("form-responses")}>
                 <CardHeader>
                   <Mail className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Respostas Formulário</CardTitle>
@@ -875,7 +963,7 @@ const Doctor = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="medical-records"> {/* Nova Aba de Prontuários */}
+          <TabsContent value="medical-records">
             {user && <DoctorMedicalRecordsTab currentUserId={user.id} />}
           </TabsContent>
 
