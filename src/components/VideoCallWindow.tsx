@@ -11,7 +11,8 @@ interface VideoCallWindowProps {
   appointmentId?: string;
   isInitiator: boolean;
   onEndCall: () => void;
-  initialSessionId?: string; // For joining an existing session
+  initialSessionId?: string;
+  incomingOffer?: RTCSessionDescriptionInit; // Nova prop para passar a oferta diretamente
 }
 
 export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
@@ -21,6 +22,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
   isInitiator,
   onEndCall,
   initialSessionId,
+  incomingOffer, // Usar esta prop
 }) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -100,18 +102,21 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
       .eq("id", sessionId);
   }, [sessionId]);
 
-  const createAnswer = useCallback(async (offer: RTCSessionDescriptionInit) => {
-    if (!peerConnection.current || !sessionId) return;
-
-    await peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await peerConnection.current.createAnswer();
-    await peerConnection.current.setLocalDescription(answer);
+  const handleAcceptCall = useCallback(async (incomingSessionId: string, offer: RTCSessionDescriptionInit) => {
+    setCallStatus("active");
+    setSessionId(incomingSessionId);
+    await setupPeerConnection();
+    await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(offer));
+    const answer = await peerConnection.current?.createAnswer();
+    await peerConnection.current?.setLocalDescription(answer);
 
     await supabase
       .from("video_sessions")
-      .update({ answer: peerConnection.current.localDescription })
-      .eq("id", sessionId);
-  }, [sessionId]);
+      .update({ answer: peerConnection.current?.localDescription, status: "active", started_at: new Date().toISOString() })
+      .eq("id", incomingSessionId);
+
+    toast({ title: "Chamada aceita", description: "Conectando..." });
+  }, [setupPeerConnection, toast]);
 
   const handleCall = useCallback(async () => {
     setCallStatus("connecting");
@@ -146,20 +151,6 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
     await createOffer();
     toast({ title: "Chamada iniciada", description: "Aguardando o médico aceitar..." });
   }, [currentUserId, otherUserId, appointmentId, isInitiator, setupPeerConnection, createOffer, toast]);
-
-  const handleAcceptCall = useCallback(async (incomingSessionId: string, offer: RTCSessionDescriptionInit) => {
-    setCallStatus("active");
-    setSessionId(incomingSessionId);
-    await setupPeerConnection();
-    await createAnswer(offer);
-
-    await supabase
-      .from("video_sessions")
-      .update({ status: "active", started_at: new Date().toISOString() })
-      .eq("id", incomingSessionId);
-
-    toast({ title: "Chamada aceita", description: "Conectando..." });
-  }, [setupPeerConnection, createAnswer, toast]);
 
   const handleEndCall = useCallback(async () => {
     if (peerConnection.current) {
@@ -198,8 +189,14 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
   };
 
   useEffect(() => {
-    if (initialSessionId && !isInitiator) {
+    if (initialSessionId && !isInitiator && incomingOffer) { // Check for incomingOffer
       // Doctor joining an existing call
+      console.log("VideoCallWindow: Doctor joining with initialSessionId and incomingOffer.");
+      handleAcceptCall(initialSessionId, incomingOffer); // Pass the incomingOffer directly
+    } else if (initialSessionId && !isInitiator && !incomingOffer) {
+      // Fallback: if for some reason incomingOffer is not provided, fetch it.
+      // This should ideally not happen if the notification always passes the offer.
+      console.warn("VideoCallWindow: Doctor joining without incomingOffer. Fetching session data as fallback.");
       const fetchSession = async () => {
         const { data, error } = await supabase
           .from("video_sessions")
@@ -208,7 +205,8 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
           .single();
 
         if (error || !data || !data.offer) {
-          toast({ title: "Erro", description: "Sessão de chamada inválida ou expirada.", variant: "destructive" });
+          console.error("VideoCallWindow: Fallback fetch failed. Error:", error, "Data:", data);
+          toast({ title: "Erro", description: "Sessão de chamada inválida ou expirada (fallback).", variant: "destructive" });
           onEndCall();
           return;
         }
@@ -219,7 +217,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
       // Initiator starts the call
       // Call is initiated via button click, not on mount
     }
-  }, [initialSessionId, isInitiator, handleAcceptCall, onEndCall, toast]);
+  }, [initialSessionId, isInitiator, incomingOffer, handleAcceptCall, onEndCall, toast]); // Added incomingOffer to deps
 
   useEffect(() => {
     if (!sessionId) return;
@@ -229,7 +227,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
       .on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "*",
           schema: "public",
           table: "video_sessions",
           filter: `id=eq.${sessionId}`,

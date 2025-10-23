@@ -28,7 +28,7 @@ interface ActiveSession {
   status: string;
   created_at: string;
   patient_profile?: PatientProfile;
-  offer?: any;
+  offer?: any; // Adicionado para incluir a oferta
 }
 
 export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabProps> = ({ currentUserId }) => {
@@ -90,7 +90,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
               IncomingCallNotification({
                 sessionId: newSession.id,
                 callerName: (newSession.patient_profile as PatientProfile)?.full_name || "Paciente Desconhecido",
-                onAccept: (id) => handleAcceptCall(id, newSession.offer),
+                onAccept: (id) => handleAcceptCall(id, newSession.offer), // Pass newSession.offer here
                 onReject: handleRejectCall,
               });
             }
@@ -109,11 +109,11 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
     };
   }, [currentUserId, fetchActiveSessions, toast]);
 
-  const handleAcceptCall = useCallback(async (sessionId: string, offer: any) => {
-    console.log("DoctorOnlineConsultationTab: Accepting call for session:", sessionId);
+  const handleAcceptCall = useCallback(async (sessionId: string, offer: any) => { // Added 'offer' parameter
+    console.log("DoctorOnlineConsultationTab: Accepting call for session:", sessionId, "with offer:", offer);
     const sessionToAccept = activeSessions.find(s => s.id === sessionId);
     if (sessionToAccept) {
-      setSelectedSession(sessionToAccept);
+      setSelectedSession({ ...sessionToAccept, offer: offer }); // Ensure offer is part of selectedSession
       setMode("video");
       // The VideoCallWindow component will handle the actual WebRTC acceptance
     }
@@ -191,6 +191,7 @@ export const DoctorOnlineConsultationTab: React.FC<DoctorOnlineConsultationTabPr
           isInitiator={false} // Doctor is not the initiator when accepting
           onEndCall={handleEndVideoCall}
           initialSessionId={selectedSession.id}
+          incomingOffer={selectedSession.offer} // Pass the offer directly
         />
         <Button variant="outline" onClick={handleEndVideoCall} className="mt-4">
           Voltar
