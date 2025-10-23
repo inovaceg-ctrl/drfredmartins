@@ -5,7 +5,7 @@ import { Session, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, Clock, FileText, LogOut, Users, Video, BarChart3, Loader2, Edit, User as UserIcon, MessageSquare, Trash2, CheckCircle, XCircle, MessageSquareText, MapPin, Phone, Mail, BookOpen } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, FileText, LogOut, Users, Video, BarChart3, Loader2, Edit, User as UserIcon, MessageSquare, Trash2, CheckCircle, XCircle, MessageSquareText, MapPin, Phone, Mail, BookOpen, Menu } from "lucide-react"; // Adicionado Menu
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { EditPatientDialog } from "@/components/EditPatientDialog";
-import { formatPhone } from "@/lib/format-phone";
+import { formatPhone } from "@/lib/format-phone"; // Importar formatPhone
 import { DoctorProfileForm } from "@/components/DoctorProfileForm";
 import { DoctorOnlineConsultationTab } from "@/components/DoctorOnlineConsultationTab";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,7 +22,17 @@ import { Label } from "@/components/ui/label";
 import { Database } from "@/integrations/supabase/types";
 import { WhatsappTranscriptionsPage } from "@/pages/WhatsappTranscriptionsPage";
 import { DoctorFormResponsesTab } from "@/components/DoctorFormResponsesTab";
-import { DoctorMedicalRecordsTab } from "@/components/doctor/DoctorMedicalRecordsTab";
+import { DoctorMedicalRecordsTab } from "@/components/doctor/DoctorMedicalRecordsTab"; // Importar o novo componente
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const Doctor = () => {
   const navigate = useNavigate();
@@ -39,6 +49,7 @@ const Doctor = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [doctorProfile, setDoctorProfile] = useState<any>(null);
   const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // Estado para controlar o Drawer
   const { toast } = useToast();
 
   useEffect(() => {
@@ -160,15 +171,18 @@ const Doctor = () => {
     }
     
     setLoadingSlots(true);
-    const newSlots: Database['public']['Tables']['availability_slots']['Insert'][] = [];
+    const newSlots: Database['public']['Tables']['availability_slots']['Insert'][] = []; // Type assertion
     const date = new Date(selectedDate);
     
+    // Inicia às 8:15
     let currentSlotTime = new Date(date);
     currentSlotTime.setHours(8, 15, 0, 0);
     
+    // Termina às 20:00
     const endOfDayLimit = new Date(date);
     endOfDayLimit.setHours(20, 0, 0, 0);
 
+    // Definir o intervalo de pausa
     const breakStart = new Date(date);
     breakStart.setHours(15, 45, 0, 0);
     const breakEnd = new Date(date);
@@ -179,15 +193,18 @@ const Doctor = () => {
 
     while (currentSlotTime.getTime() < endOfDayLimit.getTime()) {
       const startTime = new Date(currentSlotTime);
-      const endTime = new Date(currentSlotTime.getTime() + 45 * 60 * 1000);
+      const endTime = new Date(currentSlotTime.getTime() + 45 * 60 * 1000); // Adiciona 45 minutos
 
+      // Verifica se o slot atual se sobrepõe ao intervalo de pausa
       const overlapsBreak = (startTime.getTime() < breakEnd.getTime() && endTime.getTime() > breakStart.getTime());
 
       if (overlapsBreak) {
+        // Se o slot se sobrepõe, pula para o final do intervalo de pausa
         currentSlotTime = new Date(breakEnd);
-        continue;
+        continue; // Pula para a próxima iteração do loop
       }
 
+      // Se o final do slot exceder o limite de 20:00, não cria este slot
       if (endTime.getTime() > endOfDayLimit.getTime()) {
         break;
       }
@@ -199,7 +216,7 @@ const Doctor = () => {
         is_available: true,
       });
       
-      currentSlotTime = endTime;
+      currentSlotTime = endTime; // O próximo slot começa onde este termina
     }
 
     console.log("Doctor.tsx: Slots to insert:", newSlots);
@@ -207,7 +224,7 @@ const Doctor = () => {
     const { data, error } = await supabase
       .from('availability_slots')
       .insert(newSlots)
-      .select();
+      .select(); // Adicionado .select() para ver os dados inseridos
 
     if (error) {
       console.error("Doctor.tsx: Error creating slots:", error);
@@ -233,7 +250,7 @@ const Doctor = () => {
       .from('availability_slots')
       .update({ is_available: !currentStatus })
       .eq('id', slotId)
-      .select();
+      .select(); // Adicionado .select() para ver os dados atualizados
 
     if (error) {
       console.error("Doctor.tsx: Error toggling slot availability:", error);
@@ -248,6 +265,7 @@ const Doctor = () => {
     }
   };
 
+  // Handlers para seleção múltipla
   const handleSelectSlot = (slotId: string, isSelected: boolean) => {
     setSelectedSlotIds((prev) =>
       isSelected ? [...prev, slotId] : prev.filter((id) => id !== slotId)
@@ -262,6 +280,7 @@ const Doctor = () => {
     }
   };
 
+  // Ações em massa
   const handleBulkDeleteSlots = async () => {
     if (selectedSlotIds.length === 0) return;
     setLoadingSlots(true);
@@ -298,7 +317,7 @@ const Doctor = () => {
       .from('availability_slots')
       .update({ is_available: makeAvailable })
       .in('id', selectedSlotIds)
-      .select();
+      .select(); // Adicionado .select() para ver os dados atualizados
 
     if (error) {
       console.error("Doctor.tsx: Error bulk toggling availability:", error);
@@ -360,7 +379,7 @@ const Doctor = () => {
       .from('appointments')
       .update({ status })
       .eq('id', id)
-      .select();
+      .select(); // Adicionado .select() para ver os dados atualizados
 
     if (error) {
       console.error("Doctor.tsx: Error updating appointment status:", error);
@@ -410,6 +429,7 @@ const Doctor = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+    setIsDrawerOpen(false); // Fecha o drawer ao selecionar uma aba
   };
 
   if (loading) {
@@ -439,48 +459,120 @@ const Doctor = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1 md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
-            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+          {/* Desktop TabsList */}
+          <TabsList className="hidden md:flex w-full bg-muted p-1 rounded-lg border space-x-1">
+            <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap">
               <BarChart3 className="h-4 w-4 mr-2" />
               Visão Geral
             </TabsTrigger>
-            <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="profile" className="px-3 py-2 text-sm whitespace-nowrap">
               <UserIcon className="h-4 w-4 mr-2" />
               Perfil
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="schedule" className="px-3 py-2 text-sm whitespace-nowrap">
               <CalendarIcon className="h-4 w-4 mr-2" />
               Agenda
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="appointments" className="px-3 py-2 text-sm whitespace-nowrap">
               <Clock className="h-4 w-4 mr-2" />
               Consultas
             </TabsTrigger>
-            <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="patients" className="px-3 py-2 text-sm whitespace-nowrap">
               <Users className="h-4 w-4 mr-2" />
               Pacientes
             </TabsTrigger>
-            <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="medical-records" className="px-3 py-2 text-sm whitespace-nowrap">
               <BookOpen className="h-4 w-4 mr-2" />
               Prontuários
             </TabsTrigger>
-            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="online-consultation" className="px-3 py-2 text-sm whitespace-nowrap">
               <MessageSquare className="h-4 w-4 mr-2" />
               Consulta Online
             </TabsTrigger>
-            <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="whatsapp-transcriptions" className="px-3 py-2 text-sm whitespace-nowrap">
               <MessageSquareText className="h-4 w-4 mr-2" />
               Transcrições WhatsApp
             </TabsTrigger>
-            <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="form-responses" className="px-3 py-2 text-sm whitespace-nowrap">
               <Mail className="h-4 w-4 mr-2" />
               Respostas Formulário
             </TabsTrigger>
           </TabsList>
 
+          {/* Mobile Drawer Menu */}
+          <div className="md:hidden mb-4">
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+              <DrawerTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  <Menu className="h-4 w-4 mr-2" />
+                  {activeTab === "overview" && "Visão Geral"}
+                  {activeTab === "profile" && "Perfil"}
+                  {activeTab === "schedule" && "Agenda"}
+                  {activeTab === "appointments" && "Consultas"}
+                  {activeTab === "patients" && "Pacientes"}
+                  {activeTab === "medical-records" && "Prontuários"}
+                  {activeTab === "online-consultation" && "Consulta Online"}
+                  {activeTab === "whatsapp-transcriptions" && "Transcrições WhatsApp"}
+                  {activeTab === "form-responses" && "Respostas Formulário"}
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="h-[80vh] rounded-t-[10px] flex flex-col">
+                <DrawerHeader className="text-left">
+                  <DrawerTitle>Navegação do Portal</DrawerTitle>
+                  <DrawerDescription>Selecione uma opção abaixo</DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 flex-1 overflow-y-auto">
+                  <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1">
+                    <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("overview")}>
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Visão Geral
+                    </TabsTrigger>
+                    <TabsTrigger value="profile" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("profile")}>
+                      <UserIcon className="h-4 w-4 mr-2" />
+                      Perfil
+                    </TabsTrigger>
+                    <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("schedule")}>
+                      <CalendarIcon className="h-4 w-4 mr-2" />
+                      Agenda
+                    </TabsTrigger>
+                    <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("appointments")}>
+                      <Clock className="h-4 w-4 mr-2" />
+                      Consultas
+                    </TabsTrigger>
+                    <TabsTrigger value="patients" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("patients")}>
+                      <Users className="h-4 w-4 mr-2" />
+                      Pacientes
+                    </TabsTrigger>
+                    <TabsTrigger value="medical-records" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("medical-records")}>
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Prontuários
+                    </TabsTrigger>
+                    <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("online-consultation")}>
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Consulta Online
+                    </TabsTrigger>
+                    <TabsTrigger value="whatsapp-transcriptions" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("whatsapp-transcriptions")}>
+                      <MessageSquareText className="h-4 w-4 mr-2" />
+                      Transcrições WhatsApp
+                    </TabsTrigger>
+                    <TabsTrigger value="form-responses" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left" onClick={() => handleTabChange("form-responses")}>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Respostas Formulário
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+                <DrawerFooter>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Fechar</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+          </div>
+
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("profile")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("profile")}>
                 <CardHeader>
                   <UserIcon className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Meu Perfil</CardTitle>
@@ -493,7 +585,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("schedule")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("schedule")}>
                 <CardHeader>
                   <CalendarIcon className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Gerenciar Agenda</CardTitle>
@@ -506,7 +598,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("appointments")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("appointments")}>
                 <CardHeader>
                   <Clock className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Consultas Agendadas</CardTitle>
@@ -519,7 +611,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("patients")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("patients")}>
                 <CardHeader>
                   <Users className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Meus Pacientes</CardTitle>
@@ -532,7 +624,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("medical-records")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("medical-records")}>
                 <CardHeader>
                   <BookOpen className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Prontuários</CardTitle>
@@ -545,7 +637,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("online-consultation")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("online-consultation")}>
                 <CardHeader>
                   <Video className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Consulta Online</CardTitle>
@@ -571,7 +663,7 @@ const Doctor = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("form-responses")}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleTabChange("form-responses")}>
                 <CardHeader>
                   <Mail className="h-8 w-8 mb-2 text-primary" />
                   <CardTitle>Respostas Formulário</CardTitle>
