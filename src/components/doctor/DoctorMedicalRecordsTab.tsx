@@ -13,7 +13,8 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { EditMedicalRecordDialog } from "./EditMedicalRecordDialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Importar Tabs
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EditPatientDialog } from "@/components/EditPatientDialog"; // Importar o diálogo de edição de paciente
 
 type PatientProfile = Database['public']['Tables']['profiles']['Row'];
 type Session = Database['public']['Tables']['sessions']['Row'];
@@ -45,7 +46,9 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
 
   const [isEditRecordDialogOpen, setIsEditRecordDialogOpen] = useState(false);
   const [recordToEdit, setRecordToEdit] = useState<MedicalRecord | null>(null);
-  const [activeSubTab, setActiveSubTab] = useState("overview"); // Novo estado para as sub-abas
+  const [activeSubTab, setActiveSubTab] = useState("overview");
+
+  const [isEditPatientDialogOpen, setIsEditPatientDialogOpen] = useState(false); // Estado para o diálogo de edição do paciente
 
   // Fetch all patients for the doctor
   const { data: patients, isLoading: isLoadingPatients } = useQuery({
@@ -228,6 +231,11 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
     queryClient.invalidateQueries({ queryKey: ["patientMedicalRecords", selectedPatientId] });
   };
 
+  const handlePatientProfileUpdated = () => {
+    queryClient.invalidateQueries({ queryKey: ["patientProfile", selectedPatientId] });
+    queryClient.invalidateQueries({ queryKey: ["doctorPatients", currentUserId] }); // Também invalida a lista de pacientes
+  };
+
   if (isLoadingPatients || isLoadingDoctors) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -293,14 +301,17 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Patient Profile Card */}
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
                     Dados do Paciente
                   </CardTitle>
-                  <CardDescription>Informações pessoais e terapêuticas do paciente.</CardDescription>
+                  <Button variant="outline" size="sm" onClick={() => setIsEditPatientDialogOpen(true)}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
                 </CardHeader>
-                <CardContent className="space-y-3 text-sm">
+                <CardDescription className="px-6">Informações pessoais e terapêuticas do paciente.</CardDescription>
+                <CardContent className="space-y-3 text-sm pt-4">
                   {isLoadingSelectedPatient ? (
                     <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
                   ) : selectedPatientProfile ? (
@@ -592,6 +603,15 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
           open={isEditRecordDialogOpen}
           onOpenChange={setIsEditRecordDialogOpen}
           onRecordUpdated={handleRecordUpdated}
+        />
+      )}
+
+      {selectedPatientProfile && (
+        <EditPatientDialog
+          patient={selectedPatientProfile}
+          open={isEditPatientDialogOpen}
+          onOpenChange={setIsEditPatientDialogOpen}
+          onPatientUpdated={handlePatientProfileUpdated}
         />
       )}
     </div>
