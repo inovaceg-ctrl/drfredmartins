@@ -12,7 +12,7 @@ interface VideoCallWindowProps {
   isInitiator: boolean;
   onEndCall: () => void;
   initialSessionId?: string;
-  incomingOffer?: RTCSessionDescriptionInit; // Nova prop para passar a oferta diretamente
+  incomingOffer?: RTCSessionDescriptionInit;
 }
 
 export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
@@ -22,7 +22,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
   isInitiator,
   onEndCall,
   initialSessionId,
-  incomingOffer, // Usar esta prop
+  incomingOffer,
 }) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -46,23 +46,26 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
     peerConnection.current = new RTCPeerConnection(servers);
 
     try {
+      console.log("VideoCallWindow: Requesting media devices (video and audio).");
       localStream.current = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
+      console.log("VideoCallWindow: Media devices obtained successfully.");
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = localStream.current;
       }
       localStream.current.getTracks().forEach((track) => {
         peerConnection.current?.addTrack(track, localStream.current!);
       });
-    } catch (err) {
-      console.error("Error accessing media devices:", err);
+    } catch (err: any) {
+      console.error("VideoCallWindow: Error accessing media devices:", err);
       toast({
         title: "Erro de Mídia",
-        description: "Não foi possível acessar câmera ou microfone. Verifique as permissões.",
+        description: `Não foi possível acessar câmera ou microfone. Verifique as permissões do navegador. Detalhes: ${err.name || err.message}`,
         variant: "destructive",
       });
+      setCallStatus("idle"); // Reset status on media error
       throw err; // Propagate error to prevent further connection issues
     }
 
@@ -76,7 +79,6 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
     peerConnection.current.onicecandidate = async (event) => {
       if (event.candidate && sessionId) {
         console.log("VideoCallWindow: ICE candidate generated:", event.candidate);
-        // Fetch current ice_candidates to append, not overwrite
         const { data: currentSession, error: fetchError } = await supabase
           .from("video_sessions")
           .select("ice_candidates")
@@ -84,7 +86,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
           .single();
 
         if (fetchError) {
-          console.error("Error fetching current ICE candidates:", fetchError);
+          console.error("VideoCallWindow: Error fetching current ICE candidates:", fetchError);
           return;
         }
 
@@ -102,7 +104,10 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
   }, [sessionId, toast]);
 
   const createOffer = useCallback(async () => {
-    if (!peerConnection.current || !sessionId) return;
+    if (!peerConnection.current || !sessionId) {
+      console.warn("VideoCallWindow: Skipping createOffer. PeerConnection or SessionId missing.");
+      return;
+    }
 
     console.log("VideoCallWindow: Creating offer.");
     const offer = await peerConnection.current.createOffer();
@@ -123,7 +128,6 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
     try {
       await setupPeerConnection();
       
-      // Add a small delay to ensure remote description is ready
       await new Promise(resolve => setTimeout(resolve, 500)); 
 
       await peerConnection.current?.setRemoteDescription(new RTCSessionDescription(offer));
@@ -147,7 +151,7 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
         description: err.message || "Não foi possível aceitar a chamada. Verifique o console.",
         variant: "destructive",
       });
-      handleEndCall(); // End call on error
+      handleEndCall();
     }
   }, [setupPeerConnection, toast, handleEndCall]);
 
@@ -170,23 +174,23 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
       });
 
       if (error) {
-        console.error("Error creating video session:", error);
+        console.error("VideoCallWindow: Error creating video session in Supabase:", error);
         console.error("Supabase insert error details:", error.message, error.details, error.hint, error.code);
         throw new Error(`Não foi possível iniciar a chamada. Detalhes: ${error.message || "Verifique o console para mais informações."}`);
       }
-      console.log("VideoCallWindow: Video session entry created in Supabase.");
+      console.log("VideoCallWindow: Video session entry created in Supabase with ID:", newSessionId);
 
       await setupPeerConnection();
       await createOffer();
       toast({ title: "Chamada iniciada", description: "Aguardando o médico aceitar..." });
     } catch (error: any) {
-      console.error("VideoCallWindow: Error in handleCall:", error);
+      console.error("VideoCallWindow: Error in handleCall catch block:", error);
       toast({
-        title: "Erro",
-        description: error.message,
+        title: "Erro ao iniciar chamada",
+        description: error.message || "Não foi possível iniciar a chamada. Verifique o console para detalhes.",
         variant: "destructive",
       });
-      setCallStatus("idle");
+      setCallStatus("idle"); // Reset status on error
       setSessionId(null);
     }
   }, [currentUserId, otherUserId, appointmentId, isInitiator, setupPeerConnection, createOffer, toast]);
@@ -306,8 +310,6 @@ export const VideoCallWindow: React.FC<VideoCallWindowProps> = ({
           if (peerConnection.current && updatedSession.ice_candidates && updatedSession.ice_candidates.length > 0) {
             console.log("VideoCallWindow: Received ICE candidates via real-time.");
             for (const candidate of updatedSession.ice_candidates) {
-              // Check if candidate is already added to avoid duplicates
-              // This check is simplified, a more robust solution might involve tracking added candidates
               if (candidate && !peerConnection.current.remoteDescription?.sdp.includes(candidate.candidate)) {
                 await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
               }
