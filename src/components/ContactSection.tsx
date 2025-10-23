@@ -16,6 +16,9 @@ const ContactSection = () => {
     zip_code: "", // Novo campo
     state: "", // Novo campo
     city: "", // Novo campo
+    street: "", // Novo campo
+    street_number: "", // Novo campo
+    neighborhood: "", // Novo campo
     receive_email_newsletter: false, // Novo campo
     receive_whatsapp_newsletter: false, // Novo campo
     message: "",
@@ -49,6 +52,11 @@ const ContactSection = () => {
       setIsFetchingCep(true);
       try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data.erro) {
@@ -57,27 +65,29 @@ const ContactSection = () => {
             description: "Verifique o CEP digitado e tente novamente.",
             variant: "destructive",
           });
-          setFormData((prev) => ({ ...prev, state: "", city: "" }));
+          setFormData((prev) => ({ ...prev, state: "", city: "", street: "", neighborhood: "" }));
         } else {
           setFormData((prev) => ({
             ...prev,
             state: data.uf,
             city: data.localidade,
+            street: data.logradouro || "",
+            neighborhood: data.bairro || "",
           }));
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erro ao buscar CEP:", error);
         toast({
           title: "Erro na consulta de CEP",
-          description: "Não foi possível buscar o CEP. Tente novamente mais tarde.",
+          description: `Não foi possível buscar o CEP. ${error.message || 'Tente novamente mais tarde.'}`,
           variant: "destructive",
         });
-        setFormData((prev) => ({ ...prev, state: "", city: "" }));
+        setFormData((prev) => ({ ...prev, state: "", city: "", street: "", neighborhood: "" }));
       } finally {
         setIsFetchingCep(false);
       }
     } else if (cep.length < 8) {
-      setFormData((prev) => ({ ...prev, state: "", city: "" }));
+      setFormData((prev) => ({ ...prev, state: "", city: "", street: "", neighborhood: "" }));
     }
   };
 
@@ -97,6 +107,9 @@ const ContactSection = () => {
           zip_code: formData.zip_code || null,
           state: formData.state || null,
           city: formData.city || null,
+          street: formData.street || null,
+          street_number: formData.street_number || null,
+          neighborhood: formData.neighborhood || null,
           receive_email_newsletter: formData.receive_email_newsletter,
           receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
           content: formData.message,
@@ -119,6 +132,9 @@ const ContactSection = () => {
         zip_code: "",
         state: "",
         city: "",
+        street: "",
+        street_number: "",
+        neighborhood: "",
         receive_email_newsletter: false,
         receive_whatsapp_newsletter: false,
         message: "",
@@ -342,6 +358,57 @@ const ContactSection = () => {
                   readOnly // Preenchido automaticamente
                   disabled={isFetchingCep} // Desabilitado durante a busca
                 />
+              </div>
+
+              {/* Novos campos: Rua, Número, Bairro */}
+              <div>
+                <label htmlFor="street" className="block text-sm font-medium text-foreground mb-2">
+                  Rua/Avenida
+                </label>
+                <input
+                  type="text"
+                  id="street"
+                  name="street"
+                  value={formData.street}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Nome da rua ou avenida"
+                  readOnly
+                  disabled={isFetchingCep}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="street_number" className="block text-sm font-medium text-foreground mb-2">
+                    Número
+                  </label>
+                  <input
+                    type="text"
+                    id="street_number"
+                    name="street_number"
+                    value={formData.street_number}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="123"
+                    disabled={isFetchingCep}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="neighborhood" className="block text-sm font-medium text-foreground mb-2">
+                    Bairro
+                  </label>
+                  <input
+                    type="text"
+                    id="neighborhood"
+                    name="neighborhood"
+                    value={formData.neighborhood}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Nome do bairro"
+                    readOnly
+                    disabled={isFetchingCep}
+                  />
+                </div>
               </div>
 
               {/* Novos campos: Preferências de Newsletter */}

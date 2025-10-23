@@ -139,7 +139,7 @@ export type Database = {
           identification_document?: string | null;
           responsible_parties?: Json | null;
           emergency_contacts?: Json | null;
-        };
+        >;
         Update: {
           id?: string;
           full_name?: string | null;
@@ -592,6 +592,9 @@ export type Database = {
           zip_code: string | null;
           state: string | null;
           city: string | null;
+          street: string | null; // New
+          street_number: string | null; // New
+          neighborhood: string | null; // New
           receive_email_newsletter: boolean | null;
           receive_whatsapp_newsletter: boolean | null;
         };
@@ -608,6 +611,9 @@ export type Database = {
           zip_code?: string | null;
           state?: string | null;
           city?: string | null;
+          street?: string | null; // New
+          street_number?: string | null; // New
+          neighborhood?: string | null; // New
           receive_email_newsletter?: boolean | null;
           receive_whatsapp_newsletter?: boolean | null;
         };
@@ -624,6 +630,9 @@ export type Database = {
           zip_code?: string | null;
           state?: string | null;
           city?: string | null;
+          street?: string | null; // New
+          street_number?: string | null; // New
+          neighborhood?: string | null; // New
           receive_email_newsletter?: boolean | null;
           receive_whatsapp_newsletter?: boolean | null;
         };

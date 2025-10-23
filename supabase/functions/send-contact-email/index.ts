@@ -30,6 +30,9 @@ serve(async (req) => {
       zip_code, // Novo campo
       state, // Novo campo
       city, // Novo campo
+      street, // Novo campo
+      street_number, // Novo campo
+      neighborhood, // Novo campo
       receive_email_newsletter, // Novo campo
       receive_whatsapp_newsletter, // Novo campo
       content, 
@@ -47,6 +50,9 @@ serve(async (req) => {
       CEP: ${zip_code || 'Não Informado'}
       Estado: ${state || 'Não Informado'}
       Cidade: ${city || 'Não Informado'}
+      Rua/Avenida: ${street || 'Não Informado'}
+      Número: ${street_number || 'Não Informado'}
+      Bairro: ${neighborhood || 'Não Informado'}
       Receber informativo por E-mail: ${receive_email_newsletter ? 'Sim' : 'Não'}
       Receber informativo por WhatsApp: ${receive_whatsapp_newsletter ? 'Sim' : 'Não'}
       Mensagem:

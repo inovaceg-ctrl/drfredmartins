@@ -158,6 +158,12 @@ export const DoctorFormResponsesTab: React.FC = () => {
                         Nascimento: {format(new Date(message.date_of_birth), "dd/MM/yyyy", { locale: ptBR })}
                       </p>
                     )}
+                    {(message.street || message.street_number || message.neighborhood) && (
+                      <p className="flex items-center gap-2 col-span-full">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        Endereço: {[message.street, message.street_number, message.neighborhood].filter(Boolean).join(', ') || '-'}
+                      </p>
+                    )}
                     {(message.city || message.state) && (
                       <p className="flex items-center gap-2 col-span-full">
                         <MapPin className="h-4 w-4 text-primary" />
