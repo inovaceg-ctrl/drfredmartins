@@ -408,6 +408,10 @@ const Doctor = () => {
     navigate("/");
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -434,7 +438,7 @@ const Doctor = () => {
           </Button>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
           <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1 md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
             <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <BarChart3 className="h-4 w-4 mr-2" />
