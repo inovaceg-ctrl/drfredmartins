@@ -92,23 +92,23 @@ const ContactSection = () => {
       whatsapp: whatsappFormatted || null,
       date_of_birth: formData.date_of_birth || null,
       zip_code: formData.zip_code || null,
-      state: formData.state || 'Não Informado',
-      city: formData.city || 'Não Informado',
+      state: formData.state || null, // Pode ser null se não preenchido
+      city: formData.city || null,   // Pode ser null se não preenchido
       street: formData.street || null,
       neighborhood: formData.neighborhood || null,
       content: formData.message,
     };
 
-    console.log("Dados sendo enviados para o Supabase:", dataToInsert);
+    console.log("Dados sendo enviados para o Supabase (contact_submissions):", dataToInsert);
 
     try {
       const { data, error } = await supabase
-        .from('messages')
+        .from('contact_submissions') // Alterado para a nova tabela
         .insert(dataToInsert)
         .select();
 
       if (error) {
-        console.error("Erro detalhado do Supabase:", error);
+        console.error("Erro detalhado do Supabase (contact_submissions):", error);
         console.error("Supabase error message:", error.message);
         console.error("Supabase error details:", error.details);
         console.error("Supabase error hint:", error.hint);
@@ -116,7 +116,7 @@ const ContactSection = () => {
         throw error;
       }
 
-      console.log("Mensagem enviada com sucesso:", data);
+      console.log("Mensagem enviada com sucesso para contact_submissions:", data);
       toast({
         title: "Mensagem Enviada!",
         description: "Sua mensagem foi enviada com sucesso. Em breve entraremos em contato.",
@@ -133,7 +133,7 @@ const ContactSection = () => {
         message: "",
       });
     } catch (error: any) {
-      console.error("Erro ao enviar mensagem para o Supabase (catch):", error);
+      console.error("Erro ao enviar mensagem para o Supabase (contact_submissions - catch):", error);
       toast({
         title: "Erro ao Enviar Mensagem",
         description: error.message || "Ocorreu um erro ao tentar enviar sua mensagem. Por favor, tente novamente mais tarde.",

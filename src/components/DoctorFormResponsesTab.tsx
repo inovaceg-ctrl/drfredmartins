@@ -11,11 +11,11 @@ import { ptBR } from "date-fns/locale";
 import { formatPhone } from "@/lib/format-phone"; // Importar formatPhone
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-type Message = Database['public']['Tables']['messages']['Row'];
+type ContactSubmission = Database['public']['Tables']['contact_submissions']['Row']; // Alterado para o novo tipo
 
 export const DoctorFormResponsesTab: React.FC = () => {
   const { toast } = useToast();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ContactSubmission[]>([]); // Alterado para o novo tipo
   const [loading, setLoading] = useState<boolean>(true);
   const [updatingMessageId, setUpdatingMessageId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "unread" | "read">("unread");
@@ -23,7 +23,7 @@ export const DoctorFormResponsesTab: React.FC = () => {
   const fetchMessages = useCallback(async () => {
     setLoading(true);
     let query = supabase
-      .from('messages')
+      .from('contact_submissions') // Alterado para a nova tabela
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -56,7 +56,7 @@ export const DoctorFormResponsesTab: React.FC = () => {
     setUpdatingMessageId(messageId);
     try {
       const { error } = await supabase
-        .from('messages')
+        .from('contact_submissions') // Alterado para a nova tabela
         .update({ is_read: !currentStatus })
         .eq('id', messageId);
 
@@ -130,7 +130,7 @@ export const DoctorFormResponsesTab: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    Enviado em: {format(new Date(message.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                    Enviado em: {format(new Date(message.created_at!), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">

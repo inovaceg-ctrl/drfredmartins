@@ -139,7 +139,7 @@ export type Database = {
           identification_document?: string | null;
           responsible_parties?: Json | null;
           emergency_contacts?: Json | null;
-        >;
+        };
         Update: {
           id?: string;
           full_name?: string | null;
@@ -163,7 +163,7 @@ export type Database = {
           // Novas colunas adicionadas
           mental_health_history?: string | null;
           main_complaints?: string | null;
-          previous_diagnases?: string | null;
+          previous_diagnoses?: string | null;
           current_medications?: string | null;
           past_sessions_history?: string | null;
           therapist_id?: string | null;
@@ -620,6 +620,51 @@ export type Database = {
           city?: string | null;
           street?: string | null;
           neighborhood?: string | null;
+        };
+        Relationships: [];
+      };
+      contact_submissions: { -- NOVA TABELA
+        Row: {
+          id: string;
+          name: string;
+          whatsapp: string | null;
+          date_of_birth: string | null;
+          zip_code: string | null;
+          state: string | null;
+          city: string | null;
+          street: string | null;
+          neighborhood: string | null;
+          content: string;
+          is_read: boolean | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          name?: string;
+          whatsapp?: string | null;
+          date_of_birth?: string | null;
+          zip_code?: string | null;
+          state?: string | null;
+          city?: string | null;
+          street?: string | null;
+          neighborhood?: string | null;
+          content: string;
+          is_read?: boolean | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          whatsapp?: string | null;
+          date_of_birth?: string | null;
+          zip_code?: string | null;
+          state?: string | null;
+          city?: string | null;
+          street?: string | null;
+          neighborhood?: string | null;
+          content?: string;
+          is_read?: boolean | null;
+          created_at?: string | null;
         };
         Relationships: [];
       };
