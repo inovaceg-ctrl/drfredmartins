@@ -99,14 +99,14 @@ const ContactSection = () => {
     const whatsappFormatted = formData.whatsapp.replace(/\D/g, '');
 
     const dataToInsert = {
-      name: formData.name,
-      email: formData.email,
-      phone: phoneFormatted || null, // Envia null se a string formatada for vazia
-      whatsapp: whatsappFormatted || null, // Envia null se a string formatada for vazia
+      name: formData.name || 'Não Informado', // Garante valor padrão se vazio
+      email: formData.email || null,
+      phone: phoneFormatted || 'Não Informado', // Garante valor padrão se vazio
+      whatsapp: whatsappFormatted || null,
       date_of_birth: formData.date_of_birth || null,
       zip_code: formData.zip_code || null,
-      state: formData.state || null,
-      city: formData.city || null,
+      state: formData.state || 'Não Informado', // Garante valor padrão se vazio
+      city: formData.city || 'Não Informado', // Garante valor padrão se vazio
       street: formData.street || null,
       street_number: formData.street_number || null,
       neighborhood: formData.neighborhood || null,
@@ -125,6 +125,10 @@ const ContactSection = () => {
 
       if (error) {
         console.error("Erro detalhado do Supabase:", error);
+        console.error("Supabase error message:", error.message);
+        console.error("Supabase error details:", error.details);
+        console.error("Supabase error hint:", error.hint);
+        console.error("Supabase error code:", error.code);
         throw error;
       }
 
