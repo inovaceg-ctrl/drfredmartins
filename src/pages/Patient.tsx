@@ -124,24 +124,24 @@ const Patient = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
-            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1 md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
+            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <LayoutGrid className="h-4 w-4 mr-2" />
               Início
             </TabsTrigger>
-            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Calendar className="h-4 w-4 mr-2" />
               Agendar
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <Clock className="h-4 w-4 mr-2" />
               Consultas
             </TabsTrigger>
-            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <MessageSquare className="h-4 w-4 mr-2" />
               Consulta Online
             </TabsTrigger>
-            <TabsTrigger value="documents" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+            <TabsTrigger value="documents" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
               <FileText className="h-4 w-4 mr-2" />
               Documentos
             </TabsTrigger>
