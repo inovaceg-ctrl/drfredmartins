@@ -266,7 +266,7 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
 
       {selectedPatientId && (
         <Tabs value={activeSubTab} onValueChange={setActiveSubTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 bg-muted p-1 rounded-lg border">
+          <TabsList className="flex flex-wrap justify-center w-full bg-muted p-1 rounded-lg border">
             <TabsTrigger value="overview" className="px-3 py-2 text-sm whitespace-nowrap">
               <LayoutGrid className="h-4 w-4 mr-2" />
               Visão Geral

@@ -50,6 +50,7 @@ export const EditMedicalRecordDialog: React.FC<EditMedicalRecordDialogProps> = (
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Attempting to save medical record. Record ID:", record.id, "Form Data:", formData);
 
     try {
       const { error } = await supabase
@@ -63,9 +64,11 @@ export const EditMedicalRecordDialog: React.FC<EditMedicalRecordDialogProps> = (
         .eq('id', record.id);
 
       if (error) {
+        console.error("Supabase update error:", error);
         throw error;
       }
 
+      console.log("Medical record updated successfully.");
       toast({
         title: "Sucesso",
         description: "Prontuário médico atualizado com sucesso!",
@@ -73,14 +76,15 @@ export const EditMedicalRecordDialog: React.FC<EditMedicalRecordDialogProps> = (
       onRecordUpdated();
       onOpenChange(false);
     } catch (error: any) {
-      console.error("Erro ao atualizar prontuário:", error);
+      console.error("Error in handleSubmit (EditMedicalRecordDialog):", error);
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível atualizar o prontuário.",
+        description: error.message || "Não foi possível atualizar o prontuário. Verifique o console para detalhes.",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
+      console.log("handleSubmit finished. Loading state set to false.");
     }
   };
 
