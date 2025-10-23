@@ -116,7 +116,12 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-white/70">
                 <Phone size={16} />
-                <a href="tel:+553291931779" className="hover:text-white transition-opacity">
+                <a 
+                  href="https://wa.me/553291931779" // Link do WhatsApp adicionado
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-opacity"
+                >
                   +55 32 9193-1779
                 </a>
               </li>
