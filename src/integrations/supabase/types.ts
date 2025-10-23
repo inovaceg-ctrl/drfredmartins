@@ -139,7 +139,7 @@ export type Database = {
           identification_document?: string | null;
           responsible_parties?: Json | null;
           emergency_contacts?: Json | null;
-        >;
+        };
         Update: {
           id?: string;
           full_name?: string | null;
@@ -897,5 +897,5 @@ export type Enums<
     ? Database["public"]["Enums"][T]
     : never
   : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-    ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+    ? Database["public"]["Enums"][PublicEnumNameOrOptions]["Row"]
     : never
