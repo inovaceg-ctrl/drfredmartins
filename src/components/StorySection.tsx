@@ -61,7 +61,7 @@ const StorySection = () => {
               <Button 
                 className="bg-white text-slate-900 hover:bg-white/90 px-8 py-4 rounded-full text-lg flex items-center gap-3 w-full sm:w-auto"
                 onClick={() => {
-                  const element = document.getElementById('contact');
+                  const element = document.getElementById('about'); // Changed to 'about'
                   if (element) element.scrollIntoView({ behavior: 'smooth' });
                 }}
               >

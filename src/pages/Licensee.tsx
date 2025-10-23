@@ -3,7 +3,6 @@ import { ArrowRight, CheckCircle, MapPin, TrendingUp, Users, Award, DollarSign, 
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ContactSection from "@/components/ContactSection";
 
 const licenseeBenefits = [{
   icon: TrendingUp,
@@ -91,12 +90,7 @@ const stats = [
 ];
 
 const Licensee = () => {
-  const scrollToContact = () => {
-    const contactElement = document.getElementById('contact');
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  // Removed scrollToContact as ContactSection is being removed.
 
   return (
     <div className="min-h-screen bg-black">
@@ -125,7 +119,7 @@ const Licensee = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 text-lg rounded-full"
-                onClick={scrollToContact}
+                // Removed onClick={scrollToContact}
               >
                 Request License Info
                 <ArrowRight className="ml-2" size={20} />
@@ -325,7 +319,7 @@ const Licensee = () => {
                   </p>
                   <Button
                     className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 rounded-full"
-                    onClick={scrollToContact}
+                    // Removed onClick={scrollToContact}
                   >
                     Find a Location Near You
                   </Button>
@@ -416,7 +410,7 @@ const Licensee = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 text-lg rounded-full"
-              onClick={scrollToContact}
+              // Removed onClick={scrollToContact}
             >
               Get Started Today
               <ArrowRight className="ml-2" size={20} />
@@ -432,7 +426,6 @@ const Licensee = () => {
         </div>
       </section>
 
-      <ContactSection />
       <Footer />
     </div>
   );

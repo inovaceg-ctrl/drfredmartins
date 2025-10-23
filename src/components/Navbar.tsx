@@ -134,17 +134,6 @@ const Navbar = () => {
             Formação
           </a>
           <a 
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              const element = document.getElementById('contact');
-              if (element) element.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="font-medium text-foreground/70 hover:text-foreground transition-colors"
-          >
-            Contato
-          </a>
-          <a 
             href="https://instagram.com/drfredmartinsjf"
             target="_blank"
             rel="noopener noreferrer"
@@ -210,7 +199,7 @@ const Navbar = () => {
         <div className="hidden md:block">
           <Button 
             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6"
-            onClick={() => scrollToSection('contact')}
+            onClick={() => scrollToSection('about')} // Changed to 'about' since 'contact' is removed
           >
             Agende Agora
           </Button>
@@ -248,16 +237,6 @@ const Navbar = () => {
                   className="font-medium text-foreground/80 hover:text-foreground bg-accent/50 hover:bg-accent rounded-lg px-4 py-3 transition-colors text-lg block"
                 >
                   Formação
-                </a>
-                <a 
-                  href="#contact"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection('contact');
-                  }}
-                  className="font-medium text-foreground/80 hover:text-foreground bg-accent/50 hover:bg-accent rounded-lg px-4 py-3 transition-colors text-lg block"
-                >
-                  Contato
                 </a>
                 <a 
                   href="https://instagram.com/drfredmartinsjf"
@@ -333,7 +312,7 @@ const Navbar = () => {
                 <Button
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-full mt-2 py-4 text-lg"
                   onClick={() => {
-                    scrollToSection('contact');
+                    scrollToSection('about'); // Changed to 'about' since 'contact' is removed
                   }}
                 >
                   Agende Agora

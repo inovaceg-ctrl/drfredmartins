@@ -55,19 +55,6 @@ const Footer = () => {
                   Formação
                 </a>
               </li>
-              <li>
-                <a 
-                  href="#contact" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const element = document.getElementById('contact');
-                    if (element) element.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-white/70 hover:text-white transition-opacity"
-                >
-                  Contato
-                </a>
-              </li>
             </ul>
           </div>
           

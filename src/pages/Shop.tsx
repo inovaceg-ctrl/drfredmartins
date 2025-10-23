@@ -24,7 +24,6 @@ import {
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ContactSection from "@/components/ContactSection";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Shop = () => {
@@ -38,10 +37,7 @@ const Shop = () => {
   };
 
   const handleInquire = () => {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Removed logic to scroll to contact section
   };
 
   const ProductCard = ({ product }: { product: any }) => (
@@ -438,7 +434,6 @@ const Shop = () => {
         </section>
       </div>
 
-      <ContactSection />
       <Footer />
     </div>
   );
