@@ -127,8 +127,8 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2 text-white/70">
                 <Mail size={16} />
-                <a href="mailto:parcerias@drfredmartins.com.br" className="hover:text-white transition-opacity">
-                  parcerias@drfredmartins.com.br
+                <a href="mailto:contato@drfredmartins.com.br" className="hover:text-white transition-opacity">
+                  contato@drfredmartins.com.br
                 </a>
               </li>
               <li className="flex items-center gap-2 text-white/70">
