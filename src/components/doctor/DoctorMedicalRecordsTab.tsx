@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, User, CalendarDays, BookOpen, MessageSquareText, ClipboardList, CheckCircle, XCircle, Stethoscope, FileMedical } from "lucide-react";
+import { Loader2, User, CalendarDays, BookOpen, MessageSquareText, ClipboardList, CheckCircle, XCircle, Stethoscope, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -358,7 +358,7 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileMedical className="h-5 w-5 text-primary" />
+                <FileText className="h-5 w-5 text-primary" />
                 Registrar Prontuário Médico
               </CardTitle>
               <CardDescription>Adicione um novo diagnóstico, prescrição ou notas gerais.</CardDescription>
