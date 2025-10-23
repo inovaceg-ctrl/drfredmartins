@@ -95,37 +95,45 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSending(true);
 
+    const phoneFormatted = formData.phone.replace(/\D/g, '');
+    const whatsappFormatted = formData.whatsapp.replace(/\D/g, '');
+
+    const dataToInsert = {
+      name: formData.name,
+      email: formData.email,
+      phone: phoneFormatted || null, // Envia null se a string formatada for vazia
+      whatsapp: whatsappFormatted || null, // Envia null se a string formatada for vazia
+      date_of_birth: formData.date_of_birth || null,
+      zip_code: formData.zip_code || null,
+      state: formData.state || null,
+      city: formData.city || null,
+      street: formData.street || null,
+      street_number: formData.street_number || null,
+      neighborhood: formData.neighborhood || null,
+      receive_email_newsletter: formData.receive_email_newsletter,
+      receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
+      content: formData.message,
+    };
+
+    console.log("Dados sendo enviados para o Supabase:", dataToInsert);
+
     try {
       const { data, error } = await supabase
         .from('messages')
-        .insert({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone.replace(/\D/g, ''), // Salva apenas números
-          whatsapp: formData.whatsapp.replace(/\D/g, ''), // Salva apenas números
-          date_of_birth: formData.date_of_birth || null, // Salva como null se vazio
-          zip_code: formData.zip_code || null,
-          state: formData.state || null,
-          city: formData.city || null,
-          street: formData.street || null,
-          street_number: formData.street_number || null,
-          neighborhood: formData.neighborhood || null,
-          receive_email_newsletter: formData.receive_email_newsletter,
-          receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
-          content: formData.message,
-        })
-        .select(); // Adicionado .select() para obter os dados inseridos de volta
+        .insert(dataToInsert)
+        .select();
 
       if (error) {
+        console.error("Erro detalhado do Supabase:", error);
         throw error;
       }
 
-      console.log("Mensagem enviada com sucesso:", data); // Log para depuração
+      console.log("Mensagem enviada com sucesso:", data);
       toast({
         title: "Mensagem Enviada!",
         description: "Sua mensagem foi enviada com sucesso. Em breve entraremos em contato.",
       });
-      setFormData({ // Limpar formulário
+      setFormData({
         name: "",
         email: "",
         phone: "",
@@ -142,7 +150,7 @@ const ContactSection = () => {
         message: "",
       });
     } catch (error: any) {
-      console.error("Erro ao enviar mensagem para o Supabase:", error);
+      console.error("Erro ao enviar mensagem para o Supabase (catch):", error);
       toast({
         title: "Erro ao Enviar Mensagem",
         description: error.message || "Ocorreu um erro ao tentar enviar sua mensagem. Por favor, tente novamente mais tarde.",

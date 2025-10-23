@@ -1,0 +1,30 @@
+# dyad.yml  –  arquivo que fica na raiz do seu projeto
+name: drfredmartins               # nome do seu projeto (pode ser qualquer coisa)
+
+# ----------------------------------------------------
+# 1️⃣  SEÇÃO DE TOOLS  (onde declaramos o modelo Vertex)
+# ----------------------------------------------------
+tools:
+  - name: vertex-bison            # nome que será usado no código @tool("vertex-bison")
+    description: "Google Vertex Text‑Bison"
+    type: vertex                 # indica que o provider é Google Vertex AI
+    config:                      # parâmetros específicos da ferramenta
+      model: "text-bison@001"
+      location: "us-central1"    # <---  AQUI vai a sua região (ex.: us-central1)
+      temperature: 0.2
+
+# ----------------------------------------------------
+# 2️⃣  (Opcional) SEÇÃO DE PIPELINES / WORKFLOWS
+# ----------------------------------------------------
+pipelines:
+  - name: teste-vertex
+    steps:
+      - tool: vertex-bison        # chama a ferramenta que acabou de definir
+        input:
+          prompt: "Diga hi e hello world, nada mais."
+
+# ----------------------------------------------------
+# 3️⃣  (Opcional) outras seções que você já tenha, como env vars, etc.
+# ----------------------------------------------------
+# env:
+#   SOME_VAR: "valor"
