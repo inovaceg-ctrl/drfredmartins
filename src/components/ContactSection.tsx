@@ -1,26 +1,26 @@
 import { Mail, Phone, Instagram } from "lucide-react";
 import React, { useState } from "react";
-import { useToast } from "@/hooks/use-toast"; // Importar useToast
-import { supabase } from "@/integrations/supabase/client"; // Importar o cliente Supabase
-import { formatPhone } from "@/lib/format-phone"; // Importar a função de formatação de telefone
-import { Checkbox } from "@/components/ui/checkbox"; // Importar Checkbox
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { formatPhone } from "@/lib/format-phone";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ContactSection = () => {
-  const { toast } = useToast(); // Inicializar o hook de toast
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    whatsapp: "", // Novo campo
-    date_of_birth: "", // Novo campo
-    zip_code: "", // Novo campo
-    state: "", // Novo campo
-    city: "", // Novo campo
-    street: "", // Novo campo
-    street_number: "", // Novo campo
-    neighborhood: "", // Novo campo
-    receive_email_newsletter: false, // Novo campo
-    receive_whatsapp_newsletter: false, // Novo campo
+    whatsapp: "",
+    date_of_birth: "",
+    zip_code: "",
+    state: "",
+    city: "",
+    street: "",
+    street_number: "",
+    neighborhood: "",
+    receive_email_newsletter: false,
+    receive_whatsapp_newsletter: false,
     message: "",
   });
   const [isSending, setIsSending] = useState(false);
@@ -45,7 +45,7 @@ const ContactSection = () => {
   };
 
   const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cep = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    const cep = e.target.value.replace(/\D/g, '');
     setFormData((prev) => ({ ...prev, zip_code: cep }));
 
     if (cep.length === 8) {
@@ -99,17 +99,17 @@ const ContactSection = () => {
     const whatsappFormatted = formData.whatsapp.replace(/\D/g, '');
 
     const dataToInsert = {
-      name: formData.name || 'Não Informado', // Garante valor padrão se vazio
+      name: formData.name || 'Não Informado',
       email: formData.email || null,
-      phone: phoneFormatted || 'Não Informado', // Garante valor padrão se vazia
-      whatsapp: whatsappFormatted || null, // Envia null se a string formatada for vazia
+      phone: phoneFormatted || 'Não Informado',
+      whatsapp: whatsappFormatted || null,
       date_of_birth: formData.date_of_birth || null,
       zip_code: formData.zip_code || null,
-      state: formData.state || 'Não Informado', // Garante valor padrão se vazio
-      city: formData.city || 'Não Informado', // Garante valor padrão se vazio
-      street: formData.street || null, // Envia null se a string for vazia
-      street_number: formData.street_number || null, // Envia null se a string for vazia
-      neighborhood: formData.neighborhood || null, // Envia null se a string for vazia
+      state: formData.state || 'Não Informado',
+      city: formData.city || 'Não Informado',
+      street: formData.street || null,
+      street_number: formData.street_number || null,
+      neighborhood: formData.neighborhood || null,
       receive_email_newsletter: formData.receive_email_newsletter,
       receive_whatsapp_newsletter: formData.receive_whatsapp_newsletter,
       content: formData.message,
@@ -281,10 +281,10 @@ const ContactSection = () => {
                   id="phone"
                   name="phone"
                   value={formData.phone}
-                  onChange={handlePhoneChange} // Usando handlePhoneChange
+                  onChange={handlePhoneChange}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="99-9-9999-9999"
-                  maxLength={15} // Adicionado maxLength
+                  maxLength={15}
                 />
               </div>
 
@@ -332,7 +332,7 @@ const ContactSection = () => {
                     name="zip_code"
                     value={formData.zip_code}
                     onChange={handleCepChange}
-                    onBlur={handleCepChange} // Trigger on blur as well
+                    onBlur={handleCepChange}
                     maxLength={9}
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="00000-000"
@@ -352,8 +352,8 @@ const ContactSection = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Estado"
-                    readOnly // Preenchido automaticamente
-                    disabled={isFetchingCep} // Desabilitado durante a busca
+                    readOnly
+                    disabled={isFetchingCep}
                   />
                 </div>
               </div>
@@ -369,8 +369,8 @@ const ContactSection = () => {
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Cidade"
-                  readOnly // Preenchido automaticamente
-                  disabled={isFetchingCep} // Desabilitado durante a busca
+                  readOnly
+                  disabled={isFetchingCep}
                 />
               </div>
 
