@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -69,12 +70,7 @@ export default {
 					cyan: '#00B4D8',
 					light: '#000000',
 					dark: '#FFFFFF'
-				},
-				// Custom colors for the vertical menu
-				'menu-bg': '#1a2a3a', // Dark background for the entire menu list
-				'menu-item-bg': '#2a3a4a', // Slightly lighter background for menu items
-				'menu-item-active-bg': '#3a4a5a', // Even lighter for active item
-				'menu-item-active-border': '#4CAF50', // Green border for active item
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

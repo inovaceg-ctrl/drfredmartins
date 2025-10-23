@@ -123,68 +123,64 @@ const Patient = () => {
           </Button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4"> {/* Adicionado flex-col e md:flex-row para layout */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-64"> {/* Definindo largura para o menu */}
-            <TabsList className="flex flex-col w-full bg-menu-bg p-2 rounded-lg border border-border space-y-1">
-              <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
-                <LayoutGrid className="h-4 w-4 mr-2" />
-                Início
-              </TabsTrigger>
-              <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
-                <Calendar className="h-4 w-4 mr-2" />
-                Agendar
-              </TabsTrigger>
-              <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
-                <Clock className="h-4 w-4 mr-2" />
-                Consultas
-              </TabsTrigger>
-              <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Consulta Online
-              </TabsTrigger>
-              <TabsTrigger value="documents" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left rounded-md transition-colors relative bg-menu-item-bg text-white/80 hover:bg-menu-item-active-bg hover:text-white data-[state=active]:bg-menu-item-active-bg data-[state=active]:text-white data-[state=active]:border-l-4 data-[state=active]:border-menu-item-active-border">
-                <FileText className="h-4 w-4 mr-2" />
-                Documentos
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="flex flex-col w-full bg-muted p-1 rounded-lg border space-y-1 md:flex-row md:flex-nowrap md:overflow-x-auto md:scrollbar-hide md:justify-start md:w-auto">
+            <TabsTrigger value="overview" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Início
+            </TabsTrigger>
+            <TabsTrigger value="schedule" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+              <Calendar className="h-4 w-4 mr-2" />
+              Agendar
+            </TabsTrigger>
+            <TabsTrigger value="appointments" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+              <Clock className="h-4 w-4 mr-2" />
+              Consultas
+            </TabsTrigger>
+            <TabsTrigger value="online-consultation" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Consulta Online
+            </TabsTrigger>
+            <TabsTrigger value="documents" className="w-full justify-start px-4 py-3 text-base whitespace-nowrap text-left md:w-auto md:px-6 md:py-3 md:text-base md:justify-center">
+              <FileText className="h-4 w-4 mr-2" />
+              Documentos
+            </TabsTrigger>
+          </TabsList>
 
-          <div className="flex-1"> {/* Conteúdo das abas */}
-            <TabsContent value="overview" className="space-y-4">
-              <PatientOverviewTab setActiveTab={setActiveTab} />
-            </TabsContent>
+          <TabsContent value="overview" className="space-y-4">
+            <PatientOverviewTab setActiveTab={setActiveTab} />
+          </TabsContent>
 
-            <TabsContent value="schedule">
-              <PatientScheduleTab
-                user={user}
-                setActiveTab={setActiveTab}
-                onAppointmentBooked={() => {
-                  // This callback will trigger a re-fetch in PatientAppointmentsTab
-                  // by changing the key or directly calling a refetch function if passed down.
-                  // For simplicity, we'll just rely on the Appointments tab re-fetching on mount/tab change.
-                }}
-              />
-            </TabsContent>
+          <TabsContent value="schedule">
+            <PatientScheduleTab
+              user={user}
+              setActiveTab={setActiveTab}
+              onAppointmentBooked={() => {
+                // This callback will trigger a re-fetch in PatientAppointmentsTab
+                // by changing the key or directly calling a refetch function if passed down.
+                // For simplicity, we'll just rely on the Appointments tab re-fetching on mount/tab change.
+              }}
+            />
+          </TabsContent>
 
-            <TabsContent value="appointments">
-              <PatientAppointmentsTab
-                user={user}
-                onAppointmentsChanged={() => {
-                  // This callback can be used to refresh data in other tabs if needed
-                  // For now, it just ensures the appointments tab itself refreshes.
-                }}
-              />
-            </TabsContent>
+          <TabsContent value="appointments">
+            <PatientAppointmentsTab
+              user={user}
+              onAppointmentsChanged={() => {
+                // This callback can be used to refresh data in other tabs if needed
+                // For now, it just ensures the appointments tab itself refreshes.
+              }}
+            />
+          </TabsContent>
 
-            <TabsContent value="online-consultation">
-              {user && <OnlineConsultationTab currentUserId={user.id} />}
-            </TabsContent>
+          <TabsContent value="online-consultation">
+            {user && <OnlineConsultationTab currentUserId={user.id} />}
+          </TabsContent>
 
-            <TabsContent value="documents">
-              {user && <PatientDocumentsPage />}
-            </TabsContent>
-          </div>
-        </div>
+          <TabsContent value="documents">
+            {user && <PatientDocumentsPage />}
+          </TabsContent>
+        </Tabs>
       </main>
 
       <Footer />
