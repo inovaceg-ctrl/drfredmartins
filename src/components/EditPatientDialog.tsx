@@ -44,7 +44,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
     consent_status: false,
     consent_date: "",
   });
-  const [isFetchingCep, setIsFetchingCep] = useState(false); // Novo estado para CEP
+  const [isFetchingCep, setIsFetchingCep] = useState(false);
   const [doctorNotes, setDoctorNotes] = useState("");
   const [existingNotes, setExistingNotes] = useState<any[]>([]);
   const [loadingNotes, setLoadingNotes] = useState(false);
@@ -107,8 +107,8 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
             ...prev,
             state: data.uf,
             city: data.localidade,
-            street: data.logradouro, // Preenche o nome da rua
-            neighborhood: data.bairro, // Preenche o bairro
+            street: data.logradouro,
+            neighborhood: data.bairro,
           }));
         }
       } catch (error) {
@@ -282,7 +282,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
                 id="zip_code"
                 value={formData.zip_code}
                 onChange={(e) => handleZipCodeLookup(e.target.value)}
-                onBlur={(e) => handleZipCodeLookup(e.target.value)} // Trigger on blur as well
+                onBlur={(e) => handleZipCodeLookup(e.target.value)}
                 placeholder="00000-000"
                 maxLength={9}
                 disabled={isFetchingCep}
@@ -322,7 +322,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
               value={formData.street}
               onChange={(e) => setFormData({ ...formData, street: e.target.value })}
               placeholder="Nome da rua ou avenida"
-              readOnly // Adicionado readOnly
+              readOnly
               disabled={isFetchingCep}
             />
           </div>
@@ -346,7 +346,7 @@ export function EditPatientDialog({ patient, open, onOpenChange, onPatientUpdate
                 value={formData.neighborhood}
                 onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
                 placeholder="Nome do bairro"
-                readOnly // Adicionado readOnly
+                readOnly
                 disabled={isFetchingCep}
               />
             </div>
