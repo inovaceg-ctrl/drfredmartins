@@ -103,6 +103,9 @@ export type Database = {
           therapist_id: string | null;
           consent_status: boolean | null;
           consent_date: string | null;
+          identification_document: string | null;
+          responsible_parties: Json | null;
+          emergency_contacts: Json | null;
         };
         Insert: {
           id: string;
@@ -133,6 +136,9 @@ export type Database = {
           therapist_id?: string | null;
           consent_status?: boolean | null;
           consent_date?: string | null;
+          identification_document?: string | null;
+          responsible_parties?: Json | null;
+          emergency_contacts?: Json | null;
         };
         Update: {
           id?: string;
@@ -163,6 +169,9 @@ export type Database = {
           therapist_id?: string | null;
           consent_status?: boolean | null;
           consent_date?: string | null;
+          identification_document?: string | null;
+          responsible_parties?: Json | null;
+          emergency_contacts?: Json | null;
         };
         Relationships: [
           {
@@ -467,6 +476,7 @@ export type Database = {
           prescription: string | null;
           created_at: string | null;
           updated_at: string | null;
+          record_type: string | null; // Nova coluna
         };
         Insert: {
           id?: string;
@@ -478,6 +488,7 @@ export type Database = {
           prescription?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+          record_type?: string | null; // Nova coluna
         };
         Update: {
           id?: string;
@@ -489,6 +500,7 @@ export type Database = {
           prescription?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+          record_type?: string | null; // Nova coluna
         };
         Relationships: [
           {
@@ -719,6 +731,9 @@ export type Database = {
           therapist_id: string | null;
           consent_status: boolean | null;
           consent_date: string | null;
+          identification_document: string | null;
+          responsible_parties: Json | null;
+          emergency_contacts: Json | null;
         }[];
       };
       has_role: {
@@ -780,6 +795,9 @@ export type Database = {
           therapist_id: string | null;
           consent_status: boolean | null;
           consent_date: string | null;
+          identification_document: string | null;
+          responsible_parties: Json | null;
+          emergency_contacts: Json | null;
         }[];
       };
       get_appointments_for_doctor: {
