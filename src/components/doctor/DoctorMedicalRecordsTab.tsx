@@ -337,71 +337,74 @@ export const DoctorMedicalRecordsTab: React.FC<DoctorMedicalRecordsTabProps> = (
                 </CardContent>
               </Card>
 
-              {/* Sessions History Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <ClipboardList className="h-5 w-5 text-primary" />
-                    Histórico de Sessões de Terapia
-                  </CardTitle>
-                  <CardDescription>Todas as sessões de terapia registradas para este paciente.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
-                  {isLoadingSessions ? (
-                    <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
-                  ) : patientSessions && patientSessions.length > 0 ? (
-                    patientSessions.map((session) => (
-                      <div key={session.id} className="border rounded-lg p-4 space-y-2">
-                        <p className="font-semibold text-lg flex items-center gap-2">
-                          <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                          {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
-                        </p>
-                        {session.session_theme && <p><span className="font-medium">Tema:</span> {session.session_theme}</p>}
-                        {session.interventions_used && <p><span className="font-medium">Intervenções:</span> {session.interventions_used}</p>}
-                        {session.notes && <p><span className="font-medium">Notas:</span> {session.notes}</p>}
-                        {session.homework && <p><span className="font-medium">Tarefas:</span> {session.homework}</p>}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-center py-4">Nenhuma sessão registrada para este paciente.</p>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Medical Records History Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Stethoscope className="h-5 w-5 text-primary" />
-                    Histórico de Prontuários Médicos
-                  </CardTitle>
-                  <CardDescription>Todos os prontuários médicos gerais registrados para este paciente.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
-                  {isLoadingMedicalRecords ? (
-                    <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
-                  ) : patientMedicalRecords && patientMedicalRecords.length > 0 ? (
-                    patientMedicalRecords.map((record) => (
-                      <div key={record.id} className="border rounded-lg p-4 space-y-2">
-                        <div className="flex justify-between items-center">
+              {/* Container for both history cards */}
+              <div className="space-y-6">
+                {/* Sessions History Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <ClipboardList className="h-5 w-5 text-primary" />
+                      Histórico de Sessões de Terapia
+                    </CardTitle>
+                    <CardDescription>Todas as sessões de terapia registradas para este paciente.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
+                    {isLoadingSessions ? (
+                      <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                    ) : patientSessions && patientSessions.length > 0 ? (
+                      patientSessions.map((session) => (
+                        <div key={session.id} className="border rounded-lg p-4 space-y-2">
                           <p className="font-semibold text-lg flex items-center gap-2">
                             <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                            {format(new Date(record.created_at!), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                            {format(new Date(session.session_date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
                           </p>
-                          <Button variant="outline" size="sm" onClick={() => handleEditRecord(record)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
+                          {session.session_theme && <p><span className="font-medium">Tema:</span> {session.session_theme}</p>}
+                          {session.interventions_used && <p><span className="font-medium">Intervenções:</span> {session.interventions_used}</p>}
+                          {session.notes && <p><span className="font-medium">Notas:</span> {session.notes}</p>}
+                          {session.homework && <p><span className="font-medium">Tarefas:</span> {session.homework}</p>}
                         </div>
-                        {record.diagnosis && <p><span className="font-medium">Diagnóstico:</span> {record.diagnosis}</p>}
-                        {record.prescription && <p><span className="font-medium">Prescrição:</span> {record.prescription}</p>}
-                        {record.notes && <p><span className="font-medium">Notas:</span> {record.notes}</p>}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-center py-4">Nenhum prontuário médico registrado para este paciente.</p>
-                  )}
-                </CardContent>
-              </Card>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">Nenhuma sessão registrada para este paciente.</p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Medical Records History Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Stethoscope className="h-5 w-5 text-primary" />
+                      Histórico de Prontuários Médicos
+                    </CardTitle>
+                    <CardDescription>Todos os prontuários médicos gerais registrados para este paciente.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4 max-h-[500px] overflow-y-auto scrollbar-hide">
+                    {isLoadingMedicalRecords ? (
+                      <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin" /></div>
+                    ) : patientMedicalRecords && patientMedicalRecords.length > 0 ? (
+                      patientMedicalRecords.map((record) => (
+                        <div key={record.id} className="border rounded-lg p-4 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <p className="font-semibold text-lg flex items-center gap-2">
+                              <CalendarDays className="h-5 w-5 text-muted-foreground" />
+                              {format(new Date(record.created_at!), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}
+                            </p>
+                            <Button variant="outline" size="sm" onClick={() => handleEditRecord(record)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          {record.diagnosis && <p><span className="font-medium">Diagnóstico:</span> {record.diagnosis}</p>}
+                          {record.prescription && <p><span className="font-medium">Prescrição:</span> {record.prescription}</p>}
+                          {record.notes && <p><span className="font-medium">Notas:</span> {record.notes}</p>}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">Nenhum prontuário médico registrado para este paciente.</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </TabsContent>
 
